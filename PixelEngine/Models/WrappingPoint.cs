@@ -23,4 +23,6 @@ public class WrappingPoint
 
     public override string ToString() => $"{X},{Y}";
     public WrappingPoint(Point limit) : this (limit.X, limit.Y) { }
+    public WrappingPoint(Size limit) : this(limit.Width, limit.Height) { }
+
 }

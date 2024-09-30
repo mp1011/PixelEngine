@@ -1,10 +1,10 @@
 ﻿global using Microsoft.Xna.Framework;
 global using Microsoft.Xna.Framework.Graphics;
-global using Microsoft.Xna.Framework.Input;
 global using PixelEngine.Diagnostics;
 global using PixelEngine.Extensions;
 global using PixelEngine.Models;
 global using PixelEngine.Models.Graphics;
+global using PixelEngine.Models.Graphics.GensLike;
 global using PixelEngine.Services.Graphics;
 global using System;
 global using System.Collections.Generic;

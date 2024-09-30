@@ -7,7 +7,7 @@ public abstract class DataGrid<T>
     public int Width { get; }
     public int Height { get; }
 
-    public Point Size => new Point(Width, Height);
+    public Size Size => new Size(Width, Height);
 
     public abstract T this[int index] { get; set; }
 
@@ -16,6 +16,8 @@ public abstract class DataGrid<T>
         get => this[(y * Width) + x];
         set => this[(y * Width) + x] = value;
     }
+
+    public T this[Point p] => this[p.X, p.Y];
 
     public DataGrid(int width, int height)
     {
@@ -27,10 +29,18 @@ public abstract class DataGrid<T>
     {
         for(int y = 0; y < Height; y++)
         {
-            for(int  x = 0; x < Width; x++)
+            for(int x = 0; x < Width; x++)
             {
                 action(x, y);
             }
+        }
+    }
+
+    public void ForEachInRow(int row, Action<int,int> action)
+    {
+        for (int x = 0; x < Width; x++)
+        {
+            action(x, row);
         }
     }
 

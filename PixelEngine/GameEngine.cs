@@ -1,4 +1,5 @@
 ﻿
+using PixelEngine.Models.Graphics.GensLike;
 using PixelEngine.Services;
 
 namespace PixelEngine;
@@ -10,7 +11,7 @@ public class GameEngine : Game
     private DiskResourceLoader _diskResourceLoader = new DiskResourceLoader();
     private IRenderStrategy _renderStrategy;
     private RenderService _renderService;
-    private Layer[] _layers;
+
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private RenderTarget2D _renderTarget;
@@ -38,7 +39,9 @@ public class GameEngine : Game
 
     protected override void LoadContent()
     {
-        _renderService = new RenderService(_specs);
+        var patternTable = new PatternTable(_diskResourceLoader.Load("SampleVRAM/kc.ram"), _specs);
+
+        _renderService = new RenderService(_specs, patternTable, new LayerGroup(_specs));
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _renderTarget = new RenderTarget2D(GraphicsDevice, _specs.ScreenWidth, _specs.ScreenHeight);
 
@@ -67,24 +70,26 @@ public class GameEngine : Game
             new Color(255,g: 255,255),
         });
 
-        _layers = new Layer[]
+        var bg = _renderService.LayerGroup.Background;
+
+        bg.Tiles.ForEach((x, y) =>
         {
-            new Layer(_specs),
-            new Layer(_specs),
-        };
+            if (x < 8 && y < 8)
+            {
+                bg.Tiles[x, y] = new Tile(192 + x + (y*16), TileFlags.Normal, PaletteIndex.P0);
+            }
+        });
+ 
 
-        var vram = GensVramImporter.Import(_diskResourceLoader.Load("SampleVRAM/kc.ram"));
 
-        _layers[0].PixelData.CopyFrom(vram, new Rectangle(0, 120, 128, 16), new Point(0, 0));
-        _layers[1].PixelData.CopyFrom(vram, new Rectangle(0, 208, 128, 64), new Point(0, 32));
-        _layers[1].RasterInterupts.Add(new TestRasterInterupt());
+        //_layers[0].PixelData.CopyFrom(vram, new Rectangle(0, 120, 128, 16), new Point(0, 0));
+        //_layers[1].PixelData.CopyFrom(vram, new Rectangle(0, 208, 128, 64), new Point(0, 32));
+        // _layers[1].RasterInterupts.Add(new TestRasterInterupt());
     }
 
     protected override void Update(GameTime gameTime)
     {
-        _layers[0].Scroll.Y -= 1;
-
-        _renderService.RefreshFrameColors(_layers);
+        _renderService.RefreshFrameColors();
         _renderStrategy.OnFrameUpdate();
         base.Update(gameTime);
     }

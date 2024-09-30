@@ -1,4 +1,6 @@
-﻿namespace PixelEngine.Services.Graphics
+﻿using PixelEngine.Models.Graphics.GensLike;
+
+namespace PixelEngine.Services.Graphics
 {
     public interface IRasterInterupt
     {
