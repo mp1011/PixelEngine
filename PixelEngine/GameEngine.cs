@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.Xna.Framework.Input;
 using PixelEngine.Models.Graphics.GensLike;
 using PixelEngine.Services;
 
@@ -78,9 +79,21 @@ public class GameEngine : Game
             {
                 bg.Tiles[x, y] = new Tile(192 + x + (y*16), TileFlags.Normal, PaletteIndex.P0);
             }
+
+            if(x < 4 & y > 16 && y < 20)
+            {
+                bg.Tiles[x, y] = new Tile(192, TileFlags.FlipX, PaletteIndex.P0);
+            }
         });
  
-
+        var fg = _renderService.LayerGroup.Foreground;
+        fg.Tiles.ForEach((x, y) =>
+        {
+            if (x < 8 && y < 8)
+            {
+                fg.Tiles[x, y] = new Tile(200 + x + y, TileFlags.Normal, PaletteIndex.P0);
+            }
+        });
 
         //_layers[0].PixelData.CopyFrom(vram, new Rectangle(0, 120, 128, 16), new Point(0, 0));
         //_layers[1].PixelData.CopyFrom(vram, new Rectangle(0, 208, 128, 64), new Point(0, 32));
@@ -91,6 +104,43 @@ public class GameEngine : Game
     {
         _renderService.RefreshFrameColors();
         _renderStrategy.OnFrameUpdate();
+
+        var keys = Keyboard.GetState();
+        var bg = _renderService.LayerGroup.Background;
+        bg.Scroll.X--;
+     //   bg.Scroll.Y--;
+
+        if (keys.IsKeyDown(Keys.Up))
+        {
+            bg.Tiles.ForEach((x, y) =>
+            {
+                if (x < 4 & y > 16 && y < 20)
+                {
+                    bg.Tiles[x, y] = new Tile(192, TileFlags.Normal, PaletteIndex.P0);
+                }
+            });
+        }
+        else if (keys.IsKeyDown(Keys.Down))
+        {
+            bg.Tiles.ForEach((x, y) =>
+            {
+                if (x < 4 & y > 16 && y < 20)
+                {
+                    bg.Tiles[x, y] = new Tile(192, TileFlags.FlipY, PaletteIndex.P0);
+                }
+            });
+        }
+        else if (keys.IsKeyDown(Keys.Left))
+        {
+            bg.Tiles.ForEach((x, y) =>
+            {
+                if (x < 4 & y > 16 && y < 20)
+                {
+                    bg.Tiles[x, y] = new Tile(192, TileFlags.FlipX, PaletteIndex.P0);
+                }
+            });
+        }
+
         base.Update(gameTime);
     }
 

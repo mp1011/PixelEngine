@@ -45,11 +45,21 @@ public class RenderService
        
         ColorData.ForEachInRow(renderY, (x, y) =>
         {
-            Point tilePoint = new Point(x, y).DivideBy(_specs.TileSize);
+            sourcePoint.X = layer.Scroll.X + x;
+            sourcePoint.Y = layer.Scroll.Y + y;
+
+            Point tilePoint = sourcePoint.ToPoint().DivideBy(_specs.TileSize);
             var tile = layer.Tiles[tilePoint];
 
-            var tileX = x % _specs.TileSize;
-            var tileY = y % _specs.TileSize;
+            var tileX = sourcePoint.X % _specs.TileSize;
+            var tileY = sourcePoint.Y % _specs.TileSize;
+
+            if (tile.Flags.HasFlag(TileFlags.FlipX))
+                tileX = _specs.TileSize - tileX - 1;
+
+            if (tile.Flags.HasFlag(TileFlags.FlipY))
+                tileY = _specs.TileSize - tileY - 1;
+
             Color? pixelColor = _patternTable.GetTilePixel(tile, tileX, tileY, Palette);
 
             if(isFirst && pixelColor == null)

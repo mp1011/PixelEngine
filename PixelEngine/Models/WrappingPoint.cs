@@ -21,8 +21,11 @@ public class WrappingPoint
         _limit = new Point(limitX, limitY);
     }
 
+    public Point ToPoint() => new Point(X, Y);
+
     public override string ToString() => $"{X},{Y}";
     public WrappingPoint(Point limit) : this (limit.X, limit.Y) { }
     public WrappingPoint(Size limit) : this(limit.Width, limit.Height) { }
 
+    public static implicit operator Point(WrappingPoint point) => point.ToPoint();
 }
