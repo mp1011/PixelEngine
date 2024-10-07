@@ -1,33 +1,20 @@
-﻿
-namespace PixelEngine.Diagnostics;
-
-public class FrameRateDisplay
+﻿public class FrameRateDisplay
 {
-    private readonly Stopwatch _elapsedTime;
     private readonly SpriteFont _font;
-    private ulong _frameCount;
+    private readonly FrameRateCalculator _calculator;
 
     public FrameRateDisplay(SpriteFont font)
     {
         _font = font;
-        _elapsedTime = new Stopwatch();
-        _elapsedTime.Start();
+        _calculator = new FrameRateCalculator();
     }
 
     public void Draw(SpriteBatch spriteBatch, GameWindow window)
     {
-        var fps = _frameCount / _elapsedTime.Elapsed.TotalSeconds;
+        var fps = _calculator.CalcFPS();
 
         spriteBatch.Begin(SpriteSortMode.Immediate);
-        spriteBatch.DrawString(_font, $"FPS = {fps.ToString("0.0")}", new Vector2(0, window.ClientBounds.Height-16), Color.Red);
+        spriteBatch.DrawString(_font, $"FPS = {fps.ToString("0.0")}", new Vector2(0, window.ClientBounds.Height - 16), XnaColor.Red);
         spriteBatch.End();
-
-        _frameCount++;
-
-        if(_frameCount > 100)
-        {
-            _elapsedTime.Restart();
-            _frameCount = 0;
-        }
     }
 }

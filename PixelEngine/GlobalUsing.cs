@@ -1,13 +1,5 @@
 ﻿global using Microsoft.Xna.Framework;
 global using Microsoft.Xna.Framework.Graphics;
-global using PixelEngine.Diagnostics;
-global using PixelEngine.Extensions;
-global using PixelEngine.Models;
-global using PixelEngine.Models.Graphics;
-global using PixelEngine.Models.Graphics.GensLike;
-global using PixelEngine.Services.Graphics;
-global using System;
-global using System.Collections.Generic;
-global using System.Diagnostics;
-global using System.IO;
-global using System.Linq;
+global using Microsoft.Xna.Framework.Input;
+global using XnaColor = Microsoft.Xna.Framework.Color;
+global using XnaRectangle = Microsoft.Xna.Framework.Rectangle;

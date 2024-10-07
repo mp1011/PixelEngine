@@ -1,6 +1,4 @@
-﻿namespace PixelEngine.Services.Graphics;
-
-public interface IRenderStrategy
+﻿public interface IRenderStrategy
 {
     void Initialize(GraphicsDevice device, Specs specs);
     void OnFrameUpdate();
@@ -10,9 +8,9 @@ public interface IRenderStrategy
 public class CanvasRenderStrategy : IRenderStrategy
 {
     private Texture2D _canvas;
-    private readonly RenderService _renderService;
+    private readonly RenderService<VertexPositionColor> _renderService;
 
-    public CanvasRenderStrategy(RenderService renderService)
+    public CanvasRenderStrategy(RenderService<VertexPositionColor> renderService)
     {
         _renderService = renderService;
     }
@@ -20,7 +18,7 @@ public class CanvasRenderStrategy : IRenderStrategy
     public void Draw(GraphicsDevice device, SpriteBatch spriteBatch)
     {
         spriteBatch.Begin();
-        spriteBatch.Draw(_canvas, Vector2.Zero, Color.White);
+        spriteBatch.Draw(_canvas, Vector2.Zero, XnaColor.White);
         spriteBatch.End();
     }
 
@@ -31,16 +29,17 @@ public class CanvasRenderStrategy : IRenderStrategy
 
     public void OnFrameUpdate()
     {
-        _canvas.SetData(_renderService.ColorData.ToArray());
+        throw new System.NotImplementedException();
+        //_canvas.SetData(_renderService.ColorData.ToArray());
     }
 }
 
 public class PixelTextureRenderStrategy : IRenderStrategy
 {
-    private readonly RenderService _renderService;
+    private readonly RenderService<VertexPositionColor> _renderService;
     private Specs _specs;
     private Texture2D _pixel;
-    public PixelTextureRenderStrategy(RenderService renderService)
+    public PixelTextureRenderStrategy(RenderService<VertexPositionColor> renderService)
     {
         _renderService = renderService;
     }
@@ -62,7 +61,7 @@ public class PixelTextureRenderStrategy : IRenderStrategy
     {
         _specs = specs;
         _pixel = new Texture2D(device, 1, 1);
-        _pixel.SetData(new Color[] { Color.White });
+        _pixel.SetData(new XnaColor[] { XnaColor.White });
     }
 
     public void OnFrameUpdate()
@@ -73,9 +72,9 @@ public class PixelTextureRenderStrategy : IRenderStrategy
 public class PrimitivesRenderStrategy : IRenderStrategy
 {
     private BasicEffect _basicEffect;
-    private readonly RenderService _renderService;
+    private readonly RenderService<VertexPositionColor> _renderService;
 
-    public PrimitivesRenderStrategy(RenderService renderService)
+    public PrimitivesRenderStrategy(RenderService<VertexPositionColor> renderService)
     {
         _renderService = renderService;
     }

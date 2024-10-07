@@ -1,3 +1,5 @@
 ﻿
-using var game = new PixelEngine.GameEngine();
+
+using var game = new XnaGameEngine(
+    new GameEngine((s, b, l, p) => new XnaRenderService(s, b, l, p)));
 game.Run();
