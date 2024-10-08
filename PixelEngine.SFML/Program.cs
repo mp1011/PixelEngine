@@ -3,6 +3,8 @@ var renderService = gameEngine.RenderService as SFMLRenderService;
 if(renderService == null)
     throw new InvalidCastException();
 
+FrameRateDisplay frameRateDisplay = new();
+
 RenderWindow window = new RenderWindow(
     new VideoMode(640,480,32), 
     "TEST", 
@@ -15,7 +17,8 @@ while(window.IsOpen)
     window.Clear();
     gameEngine.Update();
     renderService.Draw(window);
+    frameRateDisplay.Draw(window);
+
     window.Display();
 
-    fps = frameRateCalculator.CalcFPS();
 }
