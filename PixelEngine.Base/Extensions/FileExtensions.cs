@@ -1,6 +1,6 @@
 ﻿public static class FileExtensions
 {
-    public static DirectoryInfo? GetAncestor(this DirectoryInfo directory, string name)
+    public static DirectoryInfo? GetAncestor(this DirectoryInfo? directory, string name)
     {
         while (directory != null)
         {

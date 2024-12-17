@@ -6,4 +6,6 @@
         new Layer(specs),
         new Layer(specs))
     { }
+
+    public IEnumerable<Layer> Layers => [Background, Foreground, Window, Sprites];
 }

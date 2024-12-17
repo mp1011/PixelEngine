@@ -1,10 +1,14 @@
-﻿class XnaRenderService : RenderService<VertexPositionColor>
+﻿using PixelEngine.Base.Vram;
+
+class XnaRenderService : RenderService
 {
-    public XnaRenderService(Specs specs, BitArrayDataGrid vram, LayerGroup layerGroup, Palette palette) 
-        : base(specs, vram, layerGroup, palette)
+    public XnaRenderService(Specs specs, LayerGroup layerGroup, Palette palette) 
+        : base(specs, layerGroup, palette)
     {
     }
 
-    protected override VertexPositionColor ToPlatformColor(int x, int y, Color c) => new VertexPositionColor(
-        new Vector3(x, y, 0), c.ToXnaColor());
+    protected override Vram InitVram()
+    {
+        throw new System.NotImplementedException();
+    }
 }

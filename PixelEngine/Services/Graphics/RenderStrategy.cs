@@ -8,9 +8,9 @@
 public class CanvasRenderStrategy : IRenderStrategy
 {
     private Texture2D _canvas;
-    private readonly RenderService<VertexPositionColor> _renderService;
+    private readonly RenderService _renderService;
 
-    public CanvasRenderStrategy(RenderService<VertexPositionColor> renderService)
+    public CanvasRenderStrategy(RenderService renderService)
     {
         _renderService = renderService;
     }
@@ -36,10 +36,10 @@ public class CanvasRenderStrategy : IRenderStrategy
 
 public class PixelTextureRenderStrategy : IRenderStrategy
 {
-    private readonly RenderService<VertexPositionColor> _renderService;
+    private readonly RenderService _renderService;
     private Specs _specs;
     private Texture2D _pixel;
-    public PixelTextureRenderStrategy(RenderService<VertexPositionColor> renderService)
+    public PixelTextureRenderStrategy(RenderService renderService)
     {
         _renderService = renderService;
     }
@@ -51,7 +51,7 @@ public class PixelTextureRenderStrategy : IRenderStrategy
         {
             for (int x = 0; x < _specs.ScreenWidth; x++)
             {
-                spriteBatch.Draw(_pixel, new Vector2(x, y), _renderService.ColorData[x, y].Color);
+               // spriteBatch.Draw(_pixel, new Vector2(x, y), _renderService.ColorData[x, y].Color);
             }
         }
         spriteBatch.End();
@@ -72,18 +72,18 @@ public class PixelTextureRenderStrategy : IRenderStrategy
 public class PrimitivesRenderStrategy : IRenderStrategy
 {
     private BasicEffect _basicEffect;
-    private readonly RenderService<VertexPositionColor> _renderService;
+    private readonly RenderService _renderService;
 
-    public PrimitivesRenderStrategy(RenderService<VertexPositionColor> renderService)
+    public PrimitivesRenderStrategy(RenderService renderService)
     {
         _renderService = renderService;
     }
         
     public void Draw(GraphicsDevice device, SpriteBatch spriteBatch)
     {
-        var vertices = _renderService.ColorData.ToArray();
-        _basicEffect.CurrentTechnique.Passes[0].Apply();
-        device.DrawUserPrimitives(PrimitiveType.PointList, vertices, 0, vertices.Length);
+        //var vertices = _renderService.ColorData.ToArray();
+        //_basicEffect.CurrentTechnique.Passes[0].Apply();
+        //device.DrawUserPrimitives(PrimitiveType.PointList, vertices, 0, vertices.Length);
     }
 
     public void Initialize(GraphicsDevice device, Specs specs)

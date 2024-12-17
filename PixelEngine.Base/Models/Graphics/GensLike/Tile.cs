@@ -1,12 +1,4 @@
-﻿public enum TileFlags
-{
-    Normal = 0,
-    Priority = 1,
-    FlipX = 2,
-    FlipY = 4
-}
-
-public enum PaletteIndex
+﻿public enum PaletteIndex
 {
     P0,
     P1,
@@ -18,62 +10,58 @@ public struct Tile
 {
     private byte _low, _high;
 
-    //public short Index
-    //{
-    //    get => (short)(_low | ((_high & 7) << 8));
-    //    private set
-    //    {
-    //        _low = (byte)value;
-    //        _high = (byte)((_high & 248) | (value >> 8));
-    //    }
-    //}
-
-    //0-15
-    public short X
+    public short Index
     {
-        get => (short)(_low & 15);
+        get => (short)(_low | ((_high & 7) << 8));
         private set
         {
-            _low = (byte)((_low & 240) | (byte)value);
+            _low = (byte)value;
+            _high = (byte)((_high & 248) | (value >> 8));
         }
     }
 
-    //0-127
-    public short Y
+    public bool Priority
     {
-        get => (short)((_high & 7) << 4 | ((_low & 240) >> 4));
-        private set
-        {
-            _low = (byte)((_low & 15) | (byte)value << 4);
-            _high = (byte)((_high & 248) | value >> 4);
-        }
-    }
-
-    public TileFlags Flags
-    {
-        get => (TileFlags)((_high & 224) >> 5);
+        get => (_high & 0x80) != 0;
         set
         {
-            _high = (byte)((_high & 31) | ((byte)value << 5));
+            _high = (byte)((_high & 0x7f) | (value ? 1 : 0) << 7);
+        }
+    }
+
+    public bool FlipH
+    {
+        get => (_high & 0x8) != 0;
+        set
+        {
+            _high = (byte)((_high & 0xf7) | (value ? 1 : 0) << 3);
+        }
+    }
+
+    public bool FlipV
+    {
+        get => (_high & 0x10) != 0;
+        set
+        {
+            _high = (byte)((_high & 0xef) | (value ? 1 : 0) << 4);
         }
     }
 
     public PaletteIndex PaletteIndex
     {
-        get => (PaletteIndex)((_high & 24) >> 3);
+        get => (PaletteIndex)((_high & 0x60) >> 5);
         set
         {
-            _high = (byte)((_high & 231) | ((byte)value << 3));
+            _high = (byte)((_high & 0x9f) | ((byte)value << 5));
         }
     }
 
-    public Tile(short x, short y, TileFlags flags, PaletteIndex paletteIndex) : this()
+    public Tile(short index, bool priority, bool flipH, bool flipV, PaletteIndex paletteIndex) : this()
     {
-        X = x;
-        Y = y;
-        Flags = flags;
+        Index = index;
+        FlipH = flipH;
+        FlipV = flipV;
+        Priority = priority;
         PaletteIndex = paletteIndex;
     }
-
-    public Tile(int x, int y, TileFlags flags, PaletteIndex paletteIndex) : this((short)x, (short)y, flags, paletteIndex) { }
 }

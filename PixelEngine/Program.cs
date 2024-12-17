@@ -1,5 +1,5 @@
 ﻿
 
 using var game = new XnaGameEngine(
-    new GameEngine((s, b, l, p) => new XnaRenderService(s, b, l, p)));
+    new GameEngine((s, l, p) => new XnaRenderService(s, l, p)));
 game.Run();

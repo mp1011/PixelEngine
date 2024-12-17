@@ -82,9 +82,7 @@ public class ArrayDataGrid<T> : DataGrid<T>
     }
 
     public T[] ToArray() => _data;
-}
-
-public class BitArrayDataGrid : DataGrid<byte>
+}public class BitArrayDataGrid : DataGrid<byte>
 {
     private NBitArray _data;
     public override byte this[int index]

@@ -6,11 +6,11 @@ class TileTest
     [Test]
     public void CanCreateTileWithProperties()
     {
-        var tile = new Tile(13, 98, TileFlags.FlipX | TileFlags.Priority, PaletteIndex.P3);
-        Assert.That(tile.X, Is.EqualTo(13));
-        Assert.That(tile.Y, Is.EqualTo(98));
-        Assert.That(tile.Flags, Is.EqualTo(TileFlags.FlipX | TileFlags.Priority));
+        var tile = new Tile(index: 88, priority: true, flipV: true, flipH:false, paletteIndex: PaletteIndex.P3);
+        Assert.That(tile.Index, Is.EqualTo(88));
+        Assert.That(tile.FlipH, Is.False);
+        Assert.That(tile.FlipV, Is.True);
+        Assert.That(tile.Priority, Is.True);
         Assert.That(tile.PaletteIndex, Is.EqualTo(PaletteIndex.P3));
-
     }
 }

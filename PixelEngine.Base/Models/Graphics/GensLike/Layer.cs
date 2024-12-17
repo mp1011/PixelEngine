@@ -13,11 +13,7 @@
     public Layer(Specs specs)
     {
         _specs = specs;
-        //PixelData = new BitArrayDataGrid(specs.ScreenWidth, specs.ScreenHeight,
-        //    new NBitArray(specs.BitsPerPixel, specs.ScreenWidth * specs.ScreenHeight));
-
         Tiles = new ArrayDataGrid<Tile>(64, 64);
-
         Scroll = new WrappingPoint(PixelSize.Width, PixelSize.Height);
     }
 }

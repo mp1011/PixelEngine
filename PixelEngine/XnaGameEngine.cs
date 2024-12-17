@@ -74,7 +74,6 @@ public class XnaGameEngine : Game
 
     protected override void Update(GameTime gameTime)
     {
-        RenderService.RefreshFrameColors();
         _renderStrategy.OnFrameUpdate();
 
         var keys = Keyboard.GetState();
