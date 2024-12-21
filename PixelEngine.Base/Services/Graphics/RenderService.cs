@@ -1,9 +1,14 @@
-﻿public class RenderService
+﻿using System;
+using System.Reflection;
+
+public class RenderService
 {
     private readonly Specs _specs;
     private readonly LayerGroup _layers;
     private readonly Palette[] _palettes;
     private byte[] _pixelBuffer;
+    private BitArrayDataGrid _vram;
+
    
     public RenderService(Specs specs, LayerGroup layers)
     {
@@ -11,15 +16,71 @@
         _pixelBuffer = new byte[specs.ScreenWidth * specs.ScreenHeight * Color.Bytes];
         _layers = layers;
 
+        var p0 = new Palette(
+        [
+            new Color(32,96,224),
+            new Color(0,0,0),
+            new Color(32,32,0),
+            new Color(96,96,64),
+            new Color(128,128,96),
+            new Color(192, 192,160),
+            new Color(192, 128,96),
+            new Color(64, 0,0),
+            new Color(0, 96,0),
+            new Color(0, 160,64),
+            new Color(64, 224,64),
+            new Color(96, 32,0),
+            new Color(128, 64,32),
+            new Color(160, 96,64),
+            new Color(128, 64,96),
+            new Color(255, 255,255),
+        ]);
         _palettes =
        [
+            p0,
              new Palette(Enumerable.Range(0, 64).Select(p => new Color((byte)(p * 4), 0, 0))),
              new Palette(Enumerable.Range(0, 64).Select(p => new Color(0, (byte)(p * 4), 0)))
-        ];    
+        ];
+
+        _vram = GensVramImporter.Import(DiskResourceLoader.Load("SampleVRAM\\kc.ram"));
     }
 
     private double dummy = 0;
     public byte[] CalculateFramePixels()
+    {
+        CalculateLayerPixels(_layers.Background);
+
+        return _pixelBuffer;
+    }
+
+    private void CalculateLayerPixels(Layer layer)
+    {
+        int bufferIndex = 0;
+
+        for (int y = 0; y < _specs.ScreenHeight; y++)
+        {
+            for (int x = 0; x < _specs.ScreenWidth; x++)
+            {
+                var tile = layer.Tiles[x/8, y/8];
+                byte colorValue = 0;
+                if(tile.Index != 0)
+                {
+                    int tileX = tile.Index % _specs.PatternTableTilesAcross;
+                    int tileY = tile.Index / _specs.PatternTableTilesAcross;
+                    int pixelX = (tileX * _specs.TileSize) + (x % _specs.TileSize);
+                    int pixelY = (tileY * _specs.TileSize) + (y % _specs.TileSize);
+                    int pixelIndex = (pixelY * _specs.PatternTableTilesAcross * _specs.TileSize) + pixelX;
+
+                    colorValue = _vram[pixelIndex];
+                }
+                
+                _palettes[0].WriteColor(colorValue, _pixelBuffer, bufferIndex);
+                bufferIndex += Color.Bytes;
+            }
+        }
+    }
+
+    public byte[] CalculateFramePixels_Test()
     {
         dummy += 0.1;
         int paletteIndex = 0;

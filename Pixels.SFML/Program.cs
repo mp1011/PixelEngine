@@ -8,6 +8,16 @@ var layers = new LayerGroup(
 var renderService = new SfmlRenderService(specs, new RenderService(specs, layers));
 
 
+layers.Background.Tiles.ForEach((x, y) =>
+{
+    layers.Background.Tiles[0, 0] = new Tile(16 * 12, false, false, false, PaletteIndex.P0);
+    layers.Background.Tiles[1, 0] = new Tile((16 * 12)+1, false, false, false, PaletteIndex.P0);
+    layers.Background.Tiles[0, 1] = new Tile((16 * 12) + 1, false, false, false, PaletteIndex.P0);
+
+    if(x > 8 && y > 8)
+        layers.Background.Tiles[x, y] = new Tile(16*14, false, false, false, PaletteIndex.P0);
+});
+
 while (renderService.WindowIsOpen)
 {
     renderService.DispatchEvents();

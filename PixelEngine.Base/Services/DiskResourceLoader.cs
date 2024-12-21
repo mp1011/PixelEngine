@@ -1,7 +1,7 @@
 ﻿public class DiskResourceLoader
 {
-    public byte[] Load(string path) => File.ReadAllBytes($"{ContentFolder}/{path}"); 
-    private DirectoryInfo? ContentFolder
+    public static byte[] Load(string path) => File.ReadAllBytes($"{ContentFolder}/{path}"); 
+    private static DirectoryInfo? ContentFolder
     {
         get
         {
