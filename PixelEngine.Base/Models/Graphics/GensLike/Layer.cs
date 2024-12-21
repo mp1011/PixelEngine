@@ -10,10 +10,10 @@
     public Size PixelSize => Tiles.Size * _specs.TileSize;
     public List<IRasterInterupt> RasterInterupts { get; } = new List<IRasterInterupt>();
 
-    public Layer(Specs specs)
+    public Layer(Specs specs, int tilesX, int tilesY)
     {
         _specs = specs;
-        Tiles = new ArrayDataGrid<Tile>(64, 64);
+        Tiles = new ArrayDataGrid<Tile>(tilesX, tilesY);
         Scroll = new WrappingPoint(PixelSize.Width, PixelSize.Height);
     }
 }

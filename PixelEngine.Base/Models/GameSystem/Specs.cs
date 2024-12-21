@@ -1,11 +1,4 @@
-﻿public class Specs
+﻿public record struct Specs(int ScreenWidth, int ScreenHeight, int BitsPerPixel, int TileSize, int PatternTableTilesAcross)
 {
-    public int ScreenWidth { get; } = 320;
-    public int ScreenHeight { get; } = 224;
-
-    public int BitsPerPixel { get; } = 4;
-    public int TileSize { get; } = 8;
-
-    public int PatternTableTilesAcross { get; } = 16;
-
+    public static Specs GensLike => new Specs(320, 224, 4, 8, 16);
 }

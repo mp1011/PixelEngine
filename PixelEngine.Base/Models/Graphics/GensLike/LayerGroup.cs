@@ -1,11 +1,4 @@
 ﻿public record LayerGroup(Layer Background, Layer Foreground, Layer Window, Layer Sprites)
 {
-    public LayerGroup(Specs specs) : this(
-        new Layer(specs),
-        new Layer(specs),
-        new Layer(specs),
-        new Layer(specs))
-    { }
-
     public IEnumerable<Layer> Layers => [Background, Foreground, Window, Sprites];
 }
