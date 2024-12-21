@@ -48,33 +48,56 @@ public class RenderService
     private double dummy = 0;
     public byte[] CalculateFramePixels()
     {
-        CalculateLayerPixels(_layers.Background);
+        CalculateLayerPixels(_layers.Background, true);
+        CalculateLayerPixels(_layers.Foreground, false);
 
         return _pixelBuffer;
     }
 
-    private void CalculateLayerPixels(Layer layer)
+    private void CalculateLayerPixels(Layer layer, bool isBase)
     {
         int bufferIndex = 0;
+        int tileX = 0, tileY = 0, pixelX = 0, pixelY = 0, pixelIndex = 0;
+        int srcX = 0, srcY = 0;
+        byte colorValue = 0;
+        Tile tile = new();      
 
         for (int y = 0; y < _specs.ScreenHeight; y++)
         {
             for (int x = 0; x < _specs.ScreenWidth; x++)
             {
-                var tile = layer.Tiles[x/8, y/8];
-                byte colorValue = 0;
-                if(tile.Index != 0)
+                srcX = (x + layer.Scroll.X) % layer.PixelSize.Width;
+                srcY = (y + layer.Scroll.Y) % layer.PixelSize.Height;
+                
+                tile = layer.Tiles[srcX / 8, srcY / 8];
+                if (tile.Index != 0)
                 {
-                    int tileX = tile.Index % _specs.PatternTableTilesAcross;
-                    int tileY = tile.Index / _specs.PatternTableTilesAcross;
-                    int pixelX = (tileX * _specs.TileSize) + (x % _specs.TileSize);
-                    int pixelY = (tileY * _specs.TileSize) + (y % _specs.TileSize);
-                    int pixelIndex = (pixelY * _specs.PatternTableTilesAcross * _specs.TileSize) + pixelX;
+                    tileX = tile.Index % _specs.PatternTableTilesAcross;
+                    tileY = tile.Index / _specs.PatternTableTilesAcross;
+
+                    if (tile.FlipH)
+                        pixelX = (tileX * _specs.TileSize) + (_specs.TileSize - (srcX % _specs.TileSize) - 1);
+                    else
+                        pixelX = (tileX * _specs.TileSize) + (srcX % _specs.TileSize);
+
+                    if (tile.FlipV)
+                        pixelY = (tileY * _specs.TileSize) + (_specs.TileSize - (srcY % _specs.TileSize) - 1);
+                    else
+                        pixelY = (tileY * _specs.TileSize) + (srcY % _specs.TileSize);
+
+                    pixelIndex = (pixelY * _specs.PatternTableTilesAcross * _specs.TileSize) + pixelX;
 
                     colorValue = _vram[pixelIndex];
                 }
-                
-                _palettes[0].WriteColor(colorValue, _pixelBuffer, bufferIndex);
+                else
+                {
+                    colorValue = 0;
+                }
+
+
+                if (colorValue != 0 || isBase)
+                    _palettes[0].WriteColor(colorValue, _pixelBuffer, bufferIndex);
+
                 bufferIndex += Color.Bytes;
             }
         }
