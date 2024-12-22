@@ -10,9 +10,10 @@ public class RenderService
     private BitArrayDataGrid _vram;
 
    
-    public RenderService(Specs specs, LayerGroup layers)
+    public RenderService(Specs specs, LayerGroup layers, BitArrayDataGrid vram)
     {
         _specs = specs;
+        _vram = vram;
         _pixelBuffer = new byte[specs.ScreenWidth * specs.ScreenHeight * Color.Bytes];
         _layers = layers;
 
@@ -41,8 +42,6 @@ public class RenderService
              new Palette(Enumerable.Range(0, 64).Select(p => new Color((byte)(p * 4), 0, 0))),
              new Palette(Enumerable.Range(0, 64).Select(p => new Color(0, (byte)(p * 4), 0)))
         ];
-
-        _vram = GensVramImporter.Import(DiskResourceLoader.Load("SampleVRAM\\kc.ram"));
     }
 
     private double dummy = 0;
@@ -60,14 +59,20 @@ public class RenderService
         int tileX = 0, tileY = 0, pixelX = 0, pixelY = 0, pixelIndex = 0;
         int srcX = 0, srcY = 0;
         byte colorValue = 0;
-        Tile tile = new();      
+        Tile tile = new();
+
+        var scrollX = layer.Scroll.X;
+        var scrollY = layer.Scroll.Y;
+        var pixelsWidth = layer.PixelSize.Width;
+        var pixelsHeight = layer.PixelSize.Height;
+        var tileSize = _specs.TileSize;
 
         for (int y = 0; y < _specs.ScreenHeight; y++)
         {
             for (int x = 0; x < _specs.ScreenWidth; x++)
             {
-                srcX = (x + layer.Scroll.X) % layer.PixelSize.Width;
-                srcY = (y + layer.Scroll.Y) % layer.PixelSize.Height;
+                srcX = (x + scrollX) % pixelsWidth;
+                srcY = (y + scrollY) % pixelsHeight;
                 
                 tile = layer.Tiles[srcX / 8, srcY / 8];
                 if (tile.Index != 0)
@@ -76,16 +81,16 @@ public class RenderService
                     tileY = tile.Index / _specs.PatternTableTilesAcross;
 
                     if (tile.FlipH)
-                        pixelX = (tileX * _specs.TileSize) + (_specs.TileSize - (srcX % _specs.TileSize) - 1);
+                        pixelX = (tileX * tileSize) + (tileSize - (srcX % tileSize) - 1);
                     else
-                        pixelX = (tileX * _specs.TileSize) + (srcX % _specs.TileSize);
+                        pixelX = (tileX * tileSize) + (srcX % _specs.TileSize);
 
                     if (tile.FlipV)
-                        pixelY = (tileY * _specs.TileSize) + (_specs.TileSize - (srcY % _specs.TileSize) - 1);
+                        pixelY = (tileY * tileSize) + (tileSize - (srcY % tileSize) - 1);
                     else
-                        pixelY = (tileY * _specs.TileSize) + (srcY % _specs.TileSize);
+                        pixelY = (tileY * tileSize) + (srcY % tileSize);
 
-                    pixelIndex = (pixelY * _specs.PatternTableTilesAcross * _specs.TileSize) + pixelX;
+                    pixelIndex = (pixelY * _specs.PatternTableTilesAcross * tileSize) + pixelX;
 
                     colorValue = _vram[pixelIndex];
                 }

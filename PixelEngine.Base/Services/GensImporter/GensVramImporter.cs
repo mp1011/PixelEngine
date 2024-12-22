@@ -16,6 +16,20 @@
         return tiles;
     }
 
+    public static void LoadLayer(byte[] vramData, Layer layer, int vramIndex)
+    {
+        for(int i = 0; i < layer.Tiles.Length; i++)
+        {
+            layer.Tiles[i] = new Tile(vramData[vramIndex + 1], vramData[vramIndex]);
+            if (layer.Tiles[i].Index >= 2000)
+            {
+                // not sure what these would be
+                layer.Tiles[i] = new Tile(0, 0);
+            }
+            vramIndex += 2;
+        }
+    }
+
     private static void SetTileData(BitArrayDataGrid tiles, byte[] tileBytes, int currentTile)
     {
         NBitArray tile = new NBitArray(4, 64);

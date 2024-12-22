@@ -16,6 +16,9 @@
     <None Update="Content\SampleVRAM\kc.ram">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Content\SampleVRAM\kidc_vram2.ram">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

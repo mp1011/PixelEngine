@@ -56,6 +56,12 @@ public struct Tile
         }
     }
 
+    public Tile(byte high, byte low)
+    {
+        _high = high;
+        _low = low;
+    }
+
     public Tile(short index, bool priority, bool flipH, bool flipV, PaletteIndex paletteIndex) : this()
     {
         Index = index;
