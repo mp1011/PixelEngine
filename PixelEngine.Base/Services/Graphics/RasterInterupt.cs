@@ -3,22 +3,37 @@
     void OnHBlank(Layer layer, int renderY);
 }
 
-class TestRasterInterupt : IRasterInterupt
+public class TestRasterInterupt : IRasterInterupt
 {
-    private double _value = 0;
+    private RenderService _renderService;
+    Color[] _baseColors;
+
+    public TestRasterInterupt(RenderService renderService)
+    {
+        _renderService = renderService;
+    }
 
     public void OnHBlank(Layer layer, int renderY)
     {
-        var v = _value + (renderY*10.0) / 180.0;
-        layer.Scroll.X = (int)((renderY/2) + Math.Sin(v)*8);
-
-        if (renderY == 0)
+        var palette = _renderService.Palette(0);
+        if (_baseColors == null)
         {
-            _value += 0.1;
-            if (_value > Math.PI * 2)
-            {
-                _value -= Math.PI * 2;
-            }
+            _baseColors = Enumerable.Range(0, palette.Length)
+                .Select(p => palette[p])
+                .ToArray();
         }
+
+        for (int i = 0; i < palette.Length; i++)
+            AdjustColor(i, renderY, palette);       
+    }
+
+    private void AdjustColor(int index, int renderY, Palette palette)
+    {
+        var newColor = new Color(
+           (_baseColors[index].R - (renderY / 1)).Clamp(0, 255),
+           (_baseColors[index].G - (renderY / 1)).Clamp(0, 255),
+           (_baseColors[index].B - (renderY / 1)).Clamp(0, 255));
+
+        palette.SetColor(index, newColor);
     }
 }

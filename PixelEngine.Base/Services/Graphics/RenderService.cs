@@ -1,13 +1,14 @@
-﻿using System;
-using System.Reflection;
-
-public class RenderService
+﻿public class RenderService
 {
     private readonly Specs _specs;
     private readonly LayerGroup _layers;
     private readonly Palette[] _palettes;
     private byte[] _pixelBuffer;
     private BitArrayDataGrid _vram;
+
+    private int _hInterruptLinesRemaining;
+
+    public byte HInterruptCounter { get; set; }
    
     public Palette Palette(int index) => _palettes[index];
 
@@ -24,13 +25,13 @@ public class RenderService
     private double dummy = 0;
     public byte[] CalculateFramePixels()
     {
-        CalculateLayerPixels(_layers.Background, true);
-        CalculateLayerPixels(_layers.Foreground, false);
+        CalculateScrollingLayerPixels(_layers.Background, true);
+        CalculateScrollingLayerPixels(_layers.Foreground, false);
 
         return _pixelBuffer;
     }
 
-    private void CalculateLayerPixels(Layer layer, bool isBase)
+    private void CalculateScrollingLayerPixels(ScrollingLayer layer, bool isBase)
     {
         int bufferIndex = 0;
         int tileX = 0, tileY = 0, pixelX = 0, pixelY = 0, pixelIndex = 0;
@@ -38,16 +39,21 @@ public class RenderService
         byte colorValue = 0;
         Tile tile = new();
 
-        var scrollX = layer.Scroll.X;
-        var scrollY = layer.Scroll.Y;
+        short scrollX = 0;
+        short scrollY = 0;
         var pixelsWidth = layer.PixelSize.Width;
         var pixelsHeight = layer.PixelSize.Height;
         var tileSize = _specs.TileSize;
 
+        _hInterruptLinesRemaining = HInterruptCounter;
+
         for (int y = 0; y < _specs.ScreenHeight; y++)
         {
+            scrollX = layer.HScrollTable.ValueForLine(y);
+
             for (int x = 0; x < _specs.ScreenWidth; x++)
             {
+                scrollY = layer.VScrollTable.ValueForLine(x);
                 srcX = (x + scrollX) % pixelsWidth;
                 srcY = (y + scrollY) % pixelsHeight;
                 
@@ -81,6 +87,20 @@ public class RenderService
                     _palettes[0].WriteColor(colorValue, _pixelBuffer, bufferIndex);
 
                 bufferIndex += Color.Bytes;
+            }
+
+            if (HInterruptCounter > 0)
+            {
+                if (_hInterruptLinesRemaining == 0)
+                {
+                    _hInterruptLinesRemaining = HInterruptCounter;
+                    foreach (var interupt in layer.RasterInterupts)
+                    {
+                        interupt.OnHBlank(layer, y);
+                    }
+                }
+
+                _hInterruptLinesRemaining--;
             }
         }
     }

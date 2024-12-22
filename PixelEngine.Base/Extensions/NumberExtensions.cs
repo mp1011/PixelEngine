@@ -10,4 +10,14 @@
 
         return number % mod;
     }
+
+    public static int Clamp(this int number, int min, int max)
+    {
+        if (number < min)
+            return min;
+        else if (number > max)
+            return max;
+        else
+            return number;
+    }
 }

@@ -1,8 +1,6 @@
 ﻿public class Layer
 {
-    private readonly Specs _specs;
-
-    public WrappingPoint Scroll { get; }
+    protected readonly Specs _specs;
 
     public DataGrid<Tile> Tiles { get; }
 
@@ -14,6 +12,17 @@
     {
         _specs = specs;
         Tiles = new ArrayDataGrid<Tile>(tilesX, tilesY);
-        Scroll = new WrappingPoint(PixelSize.Width, PixelSize.Height);
     }
+}
+
+public class ScrollingLayer : Layer
+{
+    public ScrollingLayer(Specs specs, int tilesX, int tilesY) : base(specs, tilesX, tilesY)
+    {
+        HScrollTable = new ScrollTable(ScrollTableType.FullScreen, true, specs);
+        VScrollTable = new ScrollTable(ScrollTableType.FullScreen, false, specs);
+    }
+
+    public ScrollTable HScrollTable { get; set; }
+    public ScrollTable VScrollTable { get; set; }
 }
