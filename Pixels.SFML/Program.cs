@@ -12,8 +12,7 @@ var renderService = new SfmlRenderService(specs, new RenderService(specs, layers
 
 GensVramImporter.LoadLayer(DiskResourceLoader.Load("SampleVRAM\\kidc_vram2.ram"), layers.Background, 0xE000);
 GensVramImporter.LoadLayer(DiskResourceLoader.Load("SampleVRAM\\kidc_vram2.ram"), layers.Foreground, 0);
-
-
+GensVramImporter.LoadColors(DiskResourceLoader.Load("SampleVRAM\\colors.ram"), renderService.Palette(0));
 
 while (renderService.WindowIsOpen)
 {

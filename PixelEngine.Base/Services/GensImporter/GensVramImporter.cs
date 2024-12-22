@@ -30,6 +30,30 @@
         }
     }
 
+    public static void LoadColors(byte[] data, Palette palette)
+    {
+        var bitReader = new BitStreamReader(data);
+        for(int colorIndex = 0; colorIndex < 16; colorIndex++)
+        {
+            bitReader.ReadNextBits(1);
+
+            byte r = bitReader.ReadNextBits(3);
+            bitReader.ReadNextBits(1);
+
+            byte g = bitReader.ReadNextBits(3);
+            bitReader.ReadNextBits(1);
+
+            byte b = bitReader.ReadNextBits(3);
+            bitReader.ReadNextBits(4);
+
+            r = (byte)(r * 36);
+            g = (byte)(g * 36);
+            b = (byte)(b * 36);
+
+            palette.SetColor(colorIndex, new Color(r,g,b));
+        }
+    }
+
     private static void SetTileData(BitArrayDataGrid tiles, byte[] tileBytes, int currentTile)
     {
         NBitArray tile = new NBitArray(4, 64);

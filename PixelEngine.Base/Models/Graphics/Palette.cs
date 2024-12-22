@@ -9,6 +9,16 @@
         _colors = colors.ToArray();
     }
 
+    public void SetColor(int index, Color color)
+    {
+        _colors[index] = color;
+    }
+
+    public Palette(int numColors)
+    {
+        _colors = Enumerable.Range(0, numColors).Select(p => new Color(0, 0, 0)).ToArray();
+    }
+
     public Color this[int index] => _colors[index];
 
     public void WriteColor(int index, byte[] buffer, int bufferIndex)

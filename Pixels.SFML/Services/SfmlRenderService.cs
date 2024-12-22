@@ -8,6 +8,8 @@
 
     public Size WindowSize { get; set; } = new Size(640, 480);
 
+    public Palette Palette(int index) => _renderService.Palette(index);
+
     public bool WindowIsOpen => _window.IsOpen;
     public void DispatchEvents() => _window.DispatchEvents();
 

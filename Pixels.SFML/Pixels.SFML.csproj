@@ -13,6 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Content\SampleVRAM\colors.ram">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Content\SampleVRAM\kc.ram">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
