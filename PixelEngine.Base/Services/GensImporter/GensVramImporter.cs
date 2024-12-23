@@ -2,8 +2,8 @@
 {
     public static BitArrayDataGrid Import(byte[] vramData)
     {
-        var tiles = new BitArrayDataGrid(128, 1000, new NBitArray(4, 128 * 1000));
-        for(int currentTile = 0; currentTile < 2000;  currentTile++)
+        var tiles = new BitArrayDataGrid(128, 1024, new NBitArray(4, 128 * 1024));
+        for(int currentTile = 0; currentTile < 2048;  currentTile++)
         {
             var tileBytes = vramData
                 .Skip(currentTile * 32)
@@ -21,11 +21,6 @@
         for(int i = 0; i < layer.Tiles.Length; i++)
         {
             layer.Tiles[i] = new Tile(vramData[vramIndex + 1], vramData[vramIndex]);
-            if (layer.Tiles[i].Index >= 2000)
-            {
-                // not sure what these would be
-                layer.Tiles[i] = new Tile(0, 0);
-            }
             vramIndex += 2;
         }
     }
@@ -39,9 +34,18 @@
         }
     }
 
-    public static void LoadColors(byte[] data, Palette palette)
+    public static void LoadColors(byte[] data, RenderService renderService, Specs specs)
     {
         var bitReader = new BitStreamReader(data);
+        for (int i = 0; i < specs.NumPalettes; i++)
+        {
+            var palette = renderService.Palette(i);
+            LoadColors(bitReader, palette);
+        }
+    }
+
+    private static void LoadColors(BitStreamReader bitReader, Palette palette)
+    {        
         for(int colorIndex = 0; colorIndex < 16; colorIndex++)
         {
             bitReader.ReadNextBits(1);

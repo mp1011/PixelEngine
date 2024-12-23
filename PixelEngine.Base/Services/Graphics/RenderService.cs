@@ -32,8 +32,8 @@
     private double dummy = 0;
     public byte[] CalculateFramePixels()
     {
-        CalculateScrollingLayerPixels(_layers.Background, true);
-        CalculateScrollingLayerPixels(_layers.Foreground, false);
+        CalculateScrollingLayerPixels(_layers.Background);
+        CalculateScrollingLayerPixels(_layers.Foreground);
 
         DrawSprites();
         return _pixelBuffer;
@@ -114,7 +114,7 @@
         }
     }
 
-    private void CalculateScrollingLayerPixels(ScrollingLayer layer, bool isBase)
+    private void CalculateScrollingLayerPixels(ScrollingLayer layer)
     {
         int bufferIndex = 0;
         int tileX = 0, tileY = 0, pixelX = 0, pixelY = 0, pixelIndex = 0;
@@ -166,8 +166,9 @@
                 }
 
 
-                if (colorValue != 0 || isBase)
-                    _palettes[0].WriteColor(colorValue, _pixelBuffer, bufferIndex);
+                if (colorValue != 0)
+                    _palettes[(int)tile.PaletteIndex].WriteColor(colorValue, _pixelBuffer, bufferIndex);
+
 
                 bufferIndex += Color.Bytes;
             }
