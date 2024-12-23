@@ -23,11 +23,11 @@ layers.Background.VScrollTable = new ScrollTable(ScrollTableType.Line, false, sp
 
 
 layers.Foreground.VScrollTable.SetAll(104);
-layers.Background.VScrollTable.SetAll(0);
+layers.Background.VScrollTable.SetAll(8);
 
 while (renderService.WindowIsOpen)
 {
-   //  layers.Foreground.VScrollTable.AddAll(1);
+   //   layers.Foreground.VScrollTable.AddAll(1);
   //  layers.Background.VScrollTable.AddAll(1);
 
     renderService.DispatchEvents();
