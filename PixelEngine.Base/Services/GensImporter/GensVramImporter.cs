@@ -30,6 +30,15 @@
         }
     }
 
+    public static void LoadSprites(byte[] vramData, int vramIndex, int numSprites, Sprite[] destination)
+    {
+        for(int i = 0; i < numSprites; i++)
+        {
+            destination[i] = new Sprite(vramData, vramIndex);
+            vramIndex += 8;
+        }
+    }
+
     public static void LoadColors(byte[] data, Palette palette)
     {
         var bitReader = new BitStreamReader(data);

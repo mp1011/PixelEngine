@@ -5,7 +5,8 @@
     int TileSize,
     int PatternTableTilesAcross,
     int ColorsPerPalette,
-    int NumPalettes)
+    int NumPalettes,
+    int NumSprites)
 {
-    public static Specs GensLike => new Specs(320, 224, 4, 8, 16, 16, 4);
+    public static Specs GensLike => new Specs(320, 224, 4, 8, 16, 16, 4, 80);
 }

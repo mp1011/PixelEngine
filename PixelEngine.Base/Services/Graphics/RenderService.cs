@@ -4,13 +4,14 @@
     private readonly LayerGroup _layers;
     private readonly Palette[] _palettes;
     private byte[] _pixelBuffer;
-    private BitArrayDataGrid _vram;
-
+    private BitArrayDataGrid _vram; 
     private int _hInterruptLinesRemaining;
 
     public byte HInterruptCounter { get; set; }
    
     public Palette Palette(int index) => _palettes[index];
+
+    public Sprite[] Sprites { get; }
 
     public RenderService(Specs specs, LayerGroup layers, BitArrayDataGrid vram)
     {
@@ -19,7 +20,13 @@
         _pixelBuffer = new byte[specs.ScreenWidth * specs.ScreenHeight * Color.Bytes];
         _layers = layers;
 
-        _palettes = Enumerable.Range(0, specs.NumPalettes).Select(p => new Palette(specs.ColorsPerPalette)).ToArray();
+        _palettes = Enumerable.Range(0, specs.NumPalettes)
+                              .Select(p => new Palette(specs.ColorsPerPalette))
+                              .ToArray();
+
+        Sprites = Enumerable.Range(0, specs.NumSprites)
+                             .Select(p => new Sprite())
+                             .ToArray();
     }
 
     private double dummy = 0;
@@ -28,7 +35,83 @@
         CalculateScrollingLayerPixels(_layers.Background, true);
         CalculateScrollingLayerPixels(_layers.Foreground, false);
 
+        DrawSprites();
         return _pixelBuffer;
+    }
+
+    private void DrawSprites()
+    {
+        for(int i = 0; i < _specs.NumSprites; i++)
+        {
+            DrawSprite(Sprites[i]);
+        }
+    }
+
+    private void DrawSprite(Sprite sprite)
+    {
+        int pixelsWide = (sprite.HSize + 1) * _specs.TileSize;
+        int pixelsTall = (sprite.VSize + 1) * _specs.TileSize;
+        int bufferIndex = 0;
+        int screenX;
+        int screenY;
+        int tileX, tileY;
+        int pixelX, pixelY;
+        int tileSize = _specs.TileSize;
+
+        byte colorValue = 0;
+        int pixelIndex = 0;
+
+        int tileNumber = 0;
+        int columnTileBegin = 0;
+
+        for (int x = 0; x < pixelsWide; x++)
+        {
+            if (x > 0 && (x % tileSize) == 0)
+                columnTileBegin += sprite.VSize + 1;
+
+            tileNumber = columnTileBegin;
+
+            for (int y = 0; y < pixelsTall; y++)
+            {
+                screenX = (sprite.HorizontalPos - 128) + x;
+                screenY = (sprite.VerticalPos - 128) + y;
+
+                if(y > 0 && (y % tileSize) == 0)
+                {
+                    tileNumber++;
+                }
+      
+                if (screenX < 0 || screenX >= _specs.ScreenWidth)
+                    continue;
+                if (screenY < 0 || screenY >= _specs.ScreenHeight)
+                    continue;
+
+                bufferIndex = ((screenY * _specs.ScreenWidth) + screenX) * Color.Bytes;
+
+
+                tileX = (sprite.Tile + tileNumber) % _specs.PatternTableTilesAcross;
+                tileY = (sprite.Tile + tileNumber) / _specs.PatternTableTilesAcross;
+
+                if (sprite.HorizontalFlip)
+                    pixelX = (tileX * tileSize) + (tileSize - (x % tileSize) - 1);
+                else
+                    pixelX = (tileX * tileSize) + (x % _specs.TileSize);
+
+                if (sprite.VerticalFlip)
+                    pixelY = (tileY * tileSize) + (tileSize - (y % tileSize) - 1);
+                else
+                    pixelY = (tileY * tileSize) + (y % tileSize);
+
+                pixelIndex = (pixelY * _specs.PatternTableTilesAcross * tileSize) + pixelX;
+
+                colorValue = _vram[pixelIndex];
+
+                if (colorValue > 0)
+                {
+                    _palettes[sprite.PaletteIndex].WriteColor(colorValue, _pixelBuffer, bufferIndex);
+                }
+            }
+        }
     }
 
     private void CalculateScrollingLayerPixels(ScrollingLayer layer, bool isBase)
