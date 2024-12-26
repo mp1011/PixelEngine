@@ -9,6 +9,11 @@
         _data = new byte[8];
     }
 
+    public void Write(int index,  byte[] data)
+    {
+        Array.Copy(data, 0, _data, index, data.Length);
+    }
+
     public byte TilePixel(int tile, int x, int y)
     {
         var tileStart = tile * 32;

@@ -1,16 +1,5 @@
 ﻿public class Workbench
 {
-    public static void LoadGemTiles(Specs specs)
-    {
-        //var vrams = DiskResourceLoader.LoadAll("SampleVRAM\\batch")
-        //    .Select(p => GensVramImporter.Import(p, specs))
-        //    .ToArray();
-
-        //var gemRegions = vrams.Select(p => p.ExtractBlockRegion(0x06EA, 0x06FC, new Size(8, 8)))
-        //                     .ToArray();
-
-    }
-
     public static void SingleTileTest(LayerGroup layers, RenderService coreRenderService, Specs specs)
     {
         coreRenderService.PatternTable.SetData(DiskResourceLoader.Load("SampleVRAM\\kc.ram"));
@@ -35,8 +24,21 @@
         layers.Background.VScrollTable = new ScrollTable(ScrollTableType.Line, false, specs);
 
 
+
         layers.Foreground.VScrollTable.SetAll(104);
         layers.Background.VScrollTable.SetAll(8);
+    }
+
+    public static TileAnimation ExtractTileAnimation(string subFolder, int tileStart, int tileEnd, int[] durations)
+    {
+        int startIndex = tileStart * 0x20;
+        int length = (tileEnd - tileStart) * 0x20;
+
+        var vrams = DiskResourceLoader.LoadAll($"SampleVRAM\\batch\\{subFolder}")
+            .Select(p => p.Skip(startIndex).Take(length).ToArray())
+            .ToArray();
+
+        return new TileAnimation(startIndex, vrams.Select((data,ix) => new TileAnimationFrame(durations[ix], data)));
     }
 
 }

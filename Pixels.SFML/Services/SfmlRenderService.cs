@@ -27,7 +27,7 @@
         "TEST",
             Styles.Titlebar | Styles.Resize | Styles.Close);
 
-        // _window.SetFramerateLimit(60);
+         _window.SetFramerateLimit(60);
         _window.Closed += _window_Closed;
     }
 
