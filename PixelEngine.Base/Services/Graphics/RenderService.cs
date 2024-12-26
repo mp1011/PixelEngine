@@ -30,8 +30,6 @@
                              .ToArray();
     }
 
-    private double dummy = 0;
-
     public byte[] CalculateFramePixels()
     {
         Array.Clear(_pixelBuffer,0, _pixelBuffer.Length);
@@ -169,10 +167,27 @@
 
     private void DrawSprites()
     {
-        for(int i = 0; i < _specs.NumSprites; i++)
+        foreach(var sprite in OrderedSprites())
         {
-            DrawSprite(Sprites[i]);
+            DrawSprite(sprite);
         }
+    }
+
+    private IEnumerable<Sprite> OrderedSprites()
+    {
+        List<Sprite> sprites = new List<Sprite>();
+
+        var nextSprite = Sprites[0];
+        sprites.Add(nextSprite);
+
+        while (nextSprite.Next != 0)
+        {
+            nextSprite = Sprites[nextSprite.Next];
+            sprites.Add(nextSprite);
+        }
+
+        sprites.Reverse();
+        return sprites;   
     }
 
     private bool DrawSprite(Sprite sprite)

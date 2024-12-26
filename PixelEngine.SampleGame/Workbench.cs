@@ -1,4 +1,6 @@
-﻿public class Workbench
+﻿using System.Runtime.Intrinsics.Arm;
+
+public class Workbench
 {
     public static void SingleTileTest(LayerGroup layers, RenderService coreRenderService, Specs specs)
     {
@@ -18,10 +20,10 @@
         GensVramImporter.LoadColors(DiskResourceLoader.Load("SampleVRAM\\colors.ram"), coreRenderService, specs);
         GensVramImporter.LoadSprites(DiskResourceLoader.Load("SampleVRAM\\kc.ram"), 0x1000, specs.NumSprites, coreRenderService.Sprites);
 
-        layers.Foreground.HScrollTable = new ScrollTable(ScrollTableType.FullScreen, true, specs);
-        layers.Foreground.VScrollTable = new ScrollTable(ScrollTableType.Line, false, specs);
-        layers.Background.HScrollTable = new ScrollTable(ScrollTableType.FullScreen, true, specs);
-        layers.Background.VScrollTable = new ScrollTable(ScrollTableType.Line, false, specs);
+        layers.Foreground.HScrollTable = new ScrollTable(ScrollTableType.Line, true, specs);
+        layers.Foreground.VScrollTable = new ScrollTable(ScrollTableType.FullScreen, false, specs);
+        layers.Background.HScrollTable = new ScrollTable(ScrollTableType.Line, true, specs);
+        layers.Background.VScrollTable = new ScrollTable(ScrollTableType.FullScreen, false, specs);
 
 
 
@@ -39,6 +41,16 @@
             .ToArray();
 
         return new TileAnimation(startIndex, vrams.Select((data,ix) => new TileAnimationFrame(durations[ix], data)));
+    }
+
+    public static TileFont CreateHudFont()
+    {
+        return new TileFont().AddChars("0123456789:x", 0x6ba);
+    }
+
+    public static SpriteString SetupClockSprites(TileFont font, RenderService renderService)
+    {
+        return new SpriteString(font, "2:55", 3, renderService.Sprites);
     }
 
 }
