@@ -13,20 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Content\SampleVRAM\colors.ram">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\SampleVRAM\kc.ram">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Models\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\PixelEngine.Base\PixelEngine.Base.csproj" />
+    <ProjectReference Include="..\PixelEngine.SampleGame\PixelEngine.SampleGame.csproj" />
   </ItemGroup>
 
 </Project>

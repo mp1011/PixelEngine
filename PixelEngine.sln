@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PixelEngine.Tests", ".\PixelEngine.Tests\PixelEngine.Tests.csproj", "{68E4E672-DC58-4D31-8FC5-D7BAE887FE67}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PixelEngine.Tests", "PixelEngine.Tests\PixelEngine.Tests.csproj", "{68E4E672-DC58-4D31-8FC5-D7BAE887FE67}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PixelEngine.Base", ".\PixelEngine.Base\PixelEngine.Base.csproj", "{2DDFF82B-BF5A-43DA-9813-AB0E8702AD96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PixelEngine.Base", "PixelEngine.Base\PixelEngine.Base.csproj", "{2DDFF82B-BF5A-43DA-9813-AB0E8702AD96}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pixels.SFML", ".\Pixels.SFML\Pixels.SFML.csproj", "{BA886845-0035-425C-945B-9DC0811220F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pixels.SFML", "Pixels.SFML\Pixels.SFML.csproj", "{BA886845-0035-425C-945B-9DC0811220F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixelEngine.SampleGame", "PixelEngine.SampleGame\PixelEngine.SampleGame.csproj", "{28393522-EC02-48D0-803F-AFC5C7F65BE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +85,26 @@ Global
 		{BA886845-0035-425C-945B-9DC0811220F8}.Release|x64.Build.0 = Release|Any CPU
 		{BA886845-0035-425C-945B-9DC0811220F8}.Release|x86.ActiveCfg = Release|Any CPU
 		{BA886845-0035-425C-945B-9DC0811220F8}.Release|x86.Build.0 = Release|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Debug|ARM.Build.0 = Debug|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Debug|x64.Build.0 = Debug|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Debug|x86.Build.0 = Debug|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Release|ARM.ActiveCfg = Release|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Release|ARM.Build.0 = Release|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Release|ARM64.Build.0 = Release|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Release|x64.ActiveCfg = Release|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Release|x64.Build.0 = Release|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Release|x86.ActiveCfg = Release|Any CPU
+		{28393522-EC02-48D0-803F-AFC5C7F65BE5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

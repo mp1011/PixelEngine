@@ -2,7 +2,7 @@
 {
     protected readonly Specs _specs;
 
-    public DataGrid<Tile> Tiles { get; }
+    public DataGrid<Tile> Tiles { get; private set; }
 
     public Size TileSize => Tiles.Size;
     public Size PixelSize => Tiles.Size * _specs.TileSize;
@@ -12,6 +12,11 @@
     {
         _specs = specs;
         Tiles = new ArrayDataGrid<Tile>(tilesX, tilesY);
+    }
+
+    public void Resize(Size tiles)
+    {
+        Tiles = new ArrayDataGrid<Tile>(tiles.Width, tiles.Height);
     }
 }
 

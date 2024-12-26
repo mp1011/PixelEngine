@@ -82,39 +82,4 @@ public class ArrayDataGrid<T> : DataGrid<T>
     }
 
     public T[] ToArray() => _data;
-}public class BitArrayDataGrid : DataGrid<byte>
-{
-    private NBitArray _data;
-    public override byte this[int index]
-    {
-        get => _data[index];
-        set => _data[index] = value;
-    }
-
-    public BitArrayDataGrid(int width, int height, NBitArray data)
-        : base(width, height)
-    {
-        _data = data;
-    }
-
-    public override string ToString()
-    {
-        StringBuilder sb = new();
-        int curY = 0;
-
-        ForEach((x, y) =>
-        {
-            if (y > curY)
-            {
-                curY = y;
-                sb.AppendLine();
-            }
-
-            var value = this[x, y].ToString("X1");
-            sb.Append(value);
-            
-        });
-
-        return sb.ToString();
-    }
 }

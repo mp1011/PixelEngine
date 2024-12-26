@@ -1,22 +1,19 @@
 ﻿public class DiskResourceLoader
 {
-    public static byte[] Load(string path) => File.ReadAllBytes($"{ContentFolder}/{path}"); 
+    public static byte[] Load(string path) => File.ReadAllBytes($"{ContentFolder}/{path}");
+
+    public static byte[][] LoadAll(string folder) =>
+        new DirectoryInfo($"{ContentFolder}/{folder}")
+            .GetFiles("*.ram")
+            .Select(p=> File.ReadAllBytes(p.FullName))
+            .ToArray();
+
     private static DirectoryInfo? ContentFolder
     {
         get
         {
-            var directory = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory;
-            int maxDepth = 32;
-            while (maxDepth-- > 0 && directory != null)
-            {
-                var contentFolder = directory.GetChild("Content");
-                if (contentFolder != null)
-                    return contentFolder;
-
-                directory = directory.Parent;
-            }
-
-            throw new Exception("Unable to find content folder");           
+            //replace with embedded resources
+            return new DirectoryInfo(@"D:\GitHub\PixelEngine\PixelEngine.SampleGame\Content");
         }
     }
 }
