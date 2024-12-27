@@ -11,9 +11,13 @@ var layers = new LayerGroup(
 var coreRenderService = new RenderService(specs, layers);
 
 Workbench.LoadKcScene(layers, coreRenderService, specs);
-// Workbench.SingleTileTest(layers, coreRenderService, specs);
+var inputManager = new SfmlInputManager<GenesisPadButtons>(
+    new GenesisLikePlayerInput(),
+    new GenesisLikePlayerInput()
+    );
 
-var renderService = new SfmlRenderService(specs, coreRenderService);
+var windowManager = new SfmlWindowManager(inputManager);
+var renderService = new SfmlRenderService(specs, windowManager, coreRenderService);
 
 var frameAnimator = new TileAnimator(coreRenderService);
 frameAnimator.AddAnimation(Workbench.ExtractTileAnimation("gem",0x6ea, 0x6fd, [6, 6, 6]));
@@ -29,13 +33,25 @@ var waterWaver = new WaterWaver(layers.Background, 128, 200);
 
 clockString.Text = "1:23";
 
-while (renderService.WindowIsOpen)
+while (windowManager.Window.IsOpen)
 {
+    inputManager.Update();
     frameAnimator.Update(frameNumber);
     clock.Update(frameNumber);
     waterWaver.Update();
 
-    renderService.DispatchEvents();
+    windowManager.DispatchEvents();
+
+
+    if(inputManager.Player1.KeyDown(GenesisPadButtons.Left))
+    {
+        coreRenderService.Sprites[11].HorizontalPos--;
+    }
+    else if (inputManager.Player1.KeyDown(GenesisPadButtons.Right))
+    {
+        coreRenderService.Sprites[11].HorizontalPos++;
+    }
+
     renderService.DisplayFrame();
     frameNumber++;
 }
