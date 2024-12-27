@@ -4,7 +4,7 @@
 
     public static byte[][] LoadAll(string folder) =>
         new DirectoryInfo($"{ContentFolder}/{folder}")
-            .GetFiles("*.ram")
+            .GetFiles("*.*")
             .Select(p=> File.ReadAllBytes(p.FullName))
             .ToArray();
 

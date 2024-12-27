@@ -31,6 +31,11 @@ public class Workbench
         layers.Background.VScrollTable.SetAll(8);
     }
 
+    public static SimpleTileAnimation ExtractTileAnimation(string subFolder, int tileStart, int tileEnd, int duration)
+    {
+        return ExtractTileAnimation(subFolder, tileStart, tileEnd, Enumerable.Repeat(duration, (tileEnd - tileStart) + 1).ToArray());
+    }
+    
     public static SimpleTileAnimation ExtractTileAnimation(string subFolder, int tileStart, int tileEnd, int[] durations)
     {
         int startIndex = tileStart * 0x20;
@@ -41,6 +46,20 @@ public class Workbench
             .ToArray();
 
         return new SimpleTileAnimation(startIndex, vrams.Select((data,ix) => new TileAnimationFrame(durations[ix], data)));
+    }
+
+    public static TileAnimationFrame[] ExtractTileAnimationFrames(string subFolder, int skip, int take, int numTiles, int duration)
+    {
+        int length = (numTiles) * 0x20;
+
+        var vrams = DiskResourceLoader.LoadAll($"SampleVRAM\\batch\\{subFolder}")
+            .Skip(skip)
+            .Take(take)
+            .Select(p => p.Take(length).ToArray())
+            .ToArray();
+
+        return vrams.Select((data, ix) => new TileAnimationFrame(duration, data))
+                    .ToArray();
     }
 
     public static TileFont CreateHudFont()
@@ -58,7 +77,7 @@ public class Workbench
         var animations = new Dictionary<PlayerAnimations, TileAnimationFrame[]>();
 
         animations[PlayerAnimations.Idle] = ExtractTileAnimation("kid_idle", 0x625, 0x631, new[] { 8 }).Frames;
-        animations[PlayerAnimations.Walk] = ExtractTileAnimation("kid_walk", 0x625, 0x631, new[] { 16, 16, 16, 16 }).Frames;
+        animations[PlayerAnimations.Walk] = ExtractTileAnimationFrames("kid_walk", 1, 5, 16, 8 );
 
         return new KeyedTileAnimation<PlayerAnimations>(
             0x625 * 0x20, animations);

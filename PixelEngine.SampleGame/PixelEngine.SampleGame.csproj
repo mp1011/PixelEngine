@@ -64,4 +64,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Content\SampleVRAM\batch\kid_walk\" />
+  </ItemGroup>
+
 </Project>
