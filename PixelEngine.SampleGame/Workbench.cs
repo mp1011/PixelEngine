@@ -31,7 +31,7 @@ public class Workbench
         layers.Background.VScrollTable.SetAll(8);
     }
 
-    public static TileAnimation ExtractTileAnimation(string subFolder, int tileStart, int tileEnd, int[] durations)
+    public static SimpleTileAnimation ExtractTileAnimation(string subFolder, int tileStart, int tileEnd, int[] durations)
     {
         int startIndex = tileStart * 0x20;
         int length = (tileEnd - tileStart) * 0x20;
@@ -40,7 +40,7 @@ public class Workbench
             .Select(p => p.Skip(startIndex).Take(length).ToArray())
             .ToArray();
 
-        return new TileAnimation(startIndex, vrams.Select((data,ix) => new TileAnimationFrame(durations[ix], data)));
+        return new SimpleTileAnimation(startIndex, vrams.Select((data,ix) => new TileAnimationFrame(durations[ix], data)));
     }
 
     public static TileFont CreateHudFont()
@@ -51,6 +51,17 @@ public class Workbench
     public static SpriteString SetupClockSprites(TileFont font, RenderService renderService)
     {
         return new SpriteString(font, "2:55", 3, renderService.Sprites);
+    }
+
+    public static KeyedTileAnimation<PlayerAnimations> LoadPlayerAnimations()
+    {
+        var animations = new Dictionary<PlayerAnimations, TileAnimationFrame[]>();
+
+        animations[PlayerAnimations.Idle] = ExtractTileAnimation("kid_idle", 0x625, 0x631, new[] { 8 }).Frames;
+        animations[PlayerAnimations.Walk] = ExtractTileAnimation("kid_walk", 0x625, 0x631, new[] { 16, 16, 16, 16 }).Frames;
+
+        return new KeyedTileAnimation<PlayerAnimations>(
+            0x625 * 0x20, animations);
     }
 
 }

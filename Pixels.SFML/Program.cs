@@ -31,6 +31,10 @@ ulong frameNumber = 0;
 
 var waterWaver = new WaterWaver(layers.Background, 128, 200);
 
+
+var playerAnimations = Workbench.LoadPlayerAnimations();
+frameAnimator.AddAnimation(playerAnimations);
+
 clockString.Text = "1:23";
 
 while (windowManager.Window.IsOpen)
@@ -46,10 +50,16 @@ while (windowManager.Window.IsOpen)
     if(inputManager.Player1.KeyDown(GenesisPadButtons.Left))
     {
         coreRenderService.Sprites[11].HorizontalPos--;
+        playerAnimations.CurrentAnimation = PlayerAnimations.Walk;
     }
     else if (inputManager.Player1.KeyDown(GenesisPadButtons.Right))
     {
         coreRenderService.Sprites[11].HorizontalPos++;
+        playerAnimations.CurrentAnimation = PlayerAnimations.Walk;
+    }
+    else
+    {
+        playerAnimations.CurrentAnimation = PlayerAnimations.Idle;
     }
 
     renderService.DisplayFrame();
