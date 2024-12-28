@@ -22,11 +22,6 @@
         }
     }
 
-    public void Foo(ref Sprite sprite)
-    {
-
-    }
-
     public SpriteString(TileFont font, string text, int spriteIndex, Sprite[] sprites)
     {
         _spriteIndex = spriteIndex;

@@ -1,13 +1,13 @@
-﻿class SfmlInputManager<TButtons> : InputManager<TButtons> where TButtons : struct
+﻿class SfmlInputManager : InputManager
 {
-    public TButtons[] PlayerKeys { get;  }
+    public GamepadButtons[] PlayerKeys { get;  }
 
-    public SfmlInputManager(PlayerInput<TButtons> player1, PlayerInput<TButtons> player2) : base(player1, player2)
+    public SfmlInputManager(PlayerInput player1, PlayerInput player2) : base(player1, player2)
     {
-        PlayerKeys = new TButtons[2];
+        PlayerKeys = new GamepadButtons[2];
     }
 
-    protected override TButtons GetKeys(int player)
+    protected override GamepadButtons GetKeys(int player)
     {
         return PlayerKeys[player];
     }

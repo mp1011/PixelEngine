@@ -1,7 +1,12 @@
-﻿public struct Sprite
+﻿public class Sprite
 {
     private byte _vpLow, _vpHigh, _next, _size, _gfxLow, _gfxHighAndFlags, _hpLow, _hpHigh;
 
+
+    public Sprite()
+    {
+
+    }
 
     public Sprite(byte[] data, int index)
     {

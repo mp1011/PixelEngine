@@ -1,6 +1,6 @@
 ﻿class SfmlWindowManager
 {
-    public SfmlWindowManager(SfmlInputManager<GenesisPadButtons> inputManager)
+    public SfmlWindowManager(SfmlInputManager inputManager)
     {
         _inputManager = inputManager;
         Window = new RenderWindow(
@@ -16,27 +16,34 @@
 
     private void Window_KeyReleased(object? sender, KeyEventArgs e)
     {
-        var keys = GenesisPadButtons.None;
+        var keys = _inputManager.PlayerKeys[0];
         if (e.Code == Keyboard.Key.Left)
-            keys = keys & ~GenesisPadButtons.Left;
+            keys = keys & ~GamepadButtons.Left;
         if (e.Code == Keyboard.Key.Right)
-            keys = keys & ~GenesisPadButtons.Right;
-
+            keys = keys & ~GamepadButtons.Right;
+        if (e.Code == Keyboard.Key.A)
+            keys = keys & ~GamepadButtons.A;
+        if (e.Code == Keyboard.Key.S)
+            keys = keys & ~GamepadButtons.B;
         _inputManager.PlayerKeys[0] = keys;
     }
 
     private void Window_KeyPressed(object? sender, KeyEventArgs e)
     {
-        var keys = GenesisPadButtons.None;
+        var keys = _inputManager.PlayerKeys[0];
         if (e.Code == Keyboard.Key.Left)
-            keys = keys | GenesisPadButtons.Left;
+            keys = keys | GamepadButtons.Left;
         if (e.Code == Keyboard.Key.Right)
-            keys = keys | GenesisPadButtons.Right;
+            keys = keys | GamepadButtons.Right;
+        if (e.Code == Keyboard.Key.A)
+            keys = keys | GamepadButtons.A;
+        if (e.Code == Keyboard.Key.S)
+            keys = keys | GamepadButtons.B;
 
         _inputManager.PlayerKeys[0] = keys;
     }
 
-    private SfmlInputManager<GenesisPadButtons> _inputManager;
+    private SfmlInputManager _inputManager;
     public RenderWindow Window { get; }   
     public Size WindowSize { get; set; } = new Size(640, 480);
 

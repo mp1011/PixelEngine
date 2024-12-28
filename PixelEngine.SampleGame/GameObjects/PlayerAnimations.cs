@@ -1,5 +1,8 @@
 ﻿public enum PlayerAnimations
 {
     Idle,
-    Walk
+    Walk,
+    Slide,
+    Jump,
+    Fall
 }

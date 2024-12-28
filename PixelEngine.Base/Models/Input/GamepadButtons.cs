@@ -1,4 +1,5 @@
-﻿public enum GenesisPadButtons
+﻿[Flags]
+public enum GamepadButtons
 {
     None=0,
     Up=1,

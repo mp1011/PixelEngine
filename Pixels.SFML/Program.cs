@@ -11,9 +11,9 @@ var layers = new LayerGroup(
 var coreRenderService = new RenderService(specs, layers);
 
 Workbench.LoadKcScene(layers, coreRenderService, specs);
-var inputManager = new SfmlInputManager<GenesisPadButtons>(
-    new GenesisLikePlayerInput(),
-    new GenesisLikePlayerInput()
+var inputManager = new SfmlInputManager(
+    new PlayerInput(),
+    new PlayerInput()
     );
 
 var windowManager = new SfmlWindowManager(inputManager);
@@ -39,6 +39,11 @@ frameAnimator.AddAnimation(playerAnimations);
 clockString.Text = "1:23";
 coreRenderService.Sprites[11].HorizontalPos += 32;
 
+var playerController = new PlayerController(
+    inputManager,
+    playerAnimations,
+    new MovingSprite(coreRenderService.Sprites[11]));
+
 while (windowManager.Window.IsOpen)
 {
     inputManager.Update();
@@ -58,24 +63,9 @@ while (windowManager.Window.IsOpen)
     //    debugAnimation.GameFramesRemaining = 0;
     //}
 
-   // renderService.DebugString = $"FRAME {debugAnimation.CurrentFrameNumber}";
+    renderService.DebugString = Debug.Text1;
 
-    if (inputManager.Player1.KeyDown(GenesisPadButtons.Left))
-    {
-        coreRenderService.Sprites[11].HorizontalFlip = true;
-        coreRenderService.Sprites[11].HorizontalPos--;
-        playerAnimations.CurrentAnimation = PlayerAnimations.Walk;
-    }
-    else if (inputManager.Player1.KeyDown(GenesisPadButtons.Right))
-    {
-        coreRenderService.Sprites[11].HorizontalFlip = false;
-        coreRenderService.Sprites[11].HorizontalPos++;
-        playerAnimations.CurrentAnimation = PlayerAnimations.Walk;
-    }
-    else
-    {
-        playerAnimations.CurrentAnimation = PlayerAnimations.Idle;
-    }
+    playerController.Update();
 
     renderService.DisplayFrame();
     frameNumber++;

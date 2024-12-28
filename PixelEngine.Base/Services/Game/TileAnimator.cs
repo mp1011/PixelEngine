@@ -24,7 +24,7 @@
 
     private void Update(TileAnimation tileAnimation)
     {
-        if(tileAnimation.GameFramesRemaining-- == 0)
+        if(--tileAnimation.GameFramesRemaining <= 0)
         {
             tileAnimation.CurrentFrameNumber++;
             tileAnimation.GameFramesRemaining = tileAnimation.CurrentFrame.Duration;

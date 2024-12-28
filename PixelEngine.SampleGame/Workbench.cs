@@ -7,9 +7,7 @@ public class Workbench
         coreRenderService.PatternTable.SetData(DiskResourceLoader.Load("SampleVRAM\\kc.ram"));
         GensVramImporter.LoadColors(DiskResourceLoader.Load("SampleVRAM\\colors.ram"), coreRenderService, specs);
 
-      //  layers.Foreground.Resize(new Size(320 / 8, 224 / 8));
          layers.Foreground.Tiles[0, 0] = new Tile(0x00c0, true, false, false, PaletteIndex.P0);      
-      //  layers.Foreground.Tiles[0, 0] = new Tile(1, true, false, false, PaletteIndex.P0);
     }
 
     public static void LoadKcScene(LayerGroup layers, RenderService coreRenderService, Specs specs)
@@ -25,10 +23,8 @@ public class Workbench
         layers.Background.HScrollTable = new ScrollTable(ScrollTableType.Line, true, specs);
         layers.Background.VScrollTable = new ScrollTable(ScrollTableType.FullScreen, false, specs);
 
-
-
         layers.Foreground.VScrollTable.SetAll(104);
-        layers.Background.VScrollTable.SetAll(8);
+        layers.Background.VScrollTable.SetAll(16);
     }
 
     public static SimpleTileAnimation ExtractTileAnimation(string subFolder, int tileStart, int tileEnd, int duration)
@@ -83,6 +79,9 @@ public class Workbench
 
         animations[PlayerAnimations.Idle] = ExtractTileAnimationFrames("kid\\idle",numTiles:16, 4);
         animations[PlayerAnimations.Walk] = ExtractTileAnimationFrames("kid\\walk",16,4);
+        animations[PlayerAnimations.Slide] = ExtractTileAnimationFrames("kid\\slide", 16, 4);
+        animations[PlayerAnimations.Jump] = ExtractTileAnimationFrames("kid\\jump", 16, 4);
+        animations[PlayerAnimations.Fall] = ExtractTileAnimationFrames("kid\\fall", 16, 4);
 
         return new KeyedTileAnimation<PlayerAnimations>(
             0x625 * 0x20, animations);

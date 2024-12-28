@@ -1,13 +1,13 @@
-﻿public abstract class InputManager<TKeys> where TKeys : struct
+﻿public abstract class InputManager
 {
-    public InputManager(PlayerInput<TKeys> player1, PlayerInput<TKeys> player2)
+    public InputManager(PlayerInput player1, PlayerInput player2)
     {
         Player1 = player1;
         Player2 = player2;
     }
 
-    public PlayerInput<TKeys> Player1 { get; }
-    public PlayerInput<TKeys> Player2 { get; }
+    public PlayerInput Player1 { get; }
+    public PlayerInput Player2 { get; }
 
     public void Update()
     {
@@ -15,6 +15,6 @@
         Player2.Update(GetKeys(1));
     }
 
-    protected abstract TKeys GetKeys(int player);    
+    protected abstract GamepadButtons GetKeys(int player);    
 }
 
