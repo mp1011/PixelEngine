@@ -1,5 +1,7 @@
 ﻿public abstract record TileAnimation(int StartIndex)
 {
+    public double DurationScale { get; set; } = 1.0;
+
     private int _currentFrame = 0;
     public int CurrentFrameNumber
     {

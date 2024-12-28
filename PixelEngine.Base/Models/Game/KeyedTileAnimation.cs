@@ -14,6 +14,7 @@
             }
         }
     }
+
     public override TileAnimationFrame CurrentFrame => Animations[CurrentAnimation][CurrentFrameNumber];
 
     public override int NumFrames => Animations[CurrentAnimation].Length;

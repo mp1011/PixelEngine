@@ -27,7 +27,7 @@
         if(--tileAnimation.GameFramesRemaining <= 0)
         {
             tileAnimation.CurrentFrameNumber++;
-            tileAnimation.GameFramesRemaining = tileAnimation.CurrentFrame.Duration;
+            tileAnimation.GameFramesRemaining = (int)(tileAnimation.CurrentFrame.Duration * tileAnimation.DurationScale);
             WriteTiles(tileAnimation);
         }
     }
