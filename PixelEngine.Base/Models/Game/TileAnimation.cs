@@ -6,7 +6,7 @@
         get => _currentFrame;
         set
         {
-            _currentFrame = value % NumFrames;
+            _currentFrame = value.NMod(NumFrames);
         }
     }
 

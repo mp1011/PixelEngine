@@ -47,14 +47,19 @@ public class Workbench
 
         return new SimpleTileAnimation(startIndex, vrams.Select((data,ix) => new TileAnimationFrame(durations[ix], data)));
     }
+    public static SimpleTileAnimation CreateDebugAnimation(string subFolder, int tileStart)
+    {
+        int startIndex = tileStart * 0x20;
+        var vrams = DiskResourceLoader.LoadAll($"SampleVRAM\\batch\\{subFolder}");
+        return new SimpleTileAnimation(startIndex, vrams.Select((data, ix) => new TileAnimationFrame(-1, data)));
+    }
 
-    public static TileAnimationFrame[] ExtractTileAnimationFrames(string subFolder, int skip, int take, int numTiles, int duration)
+
+    public static TileAnimationFrame[] ExtractTileAnimationFrames(string subFolder, int numTiles, int duration)
     {
         int length = (numTiles) * 0x20;
 
         var vrams = DiskResourceLoader.LoadAll($"SampleVRAM\\batch\\{subFolder}")
-            .Skip(skip)
-            .Take(take)
             .Select(p => p.Take(length).ToArray())
             .ToArray();
 
@@ -76,8 +81,8 @@ public class Workbench
     {
         var animations = new Dictionary<PlayerAnimations, TileAnimationFrame[]>();
 
-        animations[PlayerAnimations.Idle] = ExtractTileAnimation("kid_idle", 0x625, 0x631, new[] { 8 }).Frames;
-        animations[PlayerAnimations.Walk] = ExtractTileAnimationFrames("kid_walk", 1, 5, 16, 8 );
+        animations[PlayerAnimations.Idle] = ExtractTileAnimationFrames("kid\\idle",numTiles:16, 4);
+        animations[PlayerAnimations.Walk] = ExtractTileAnimationFrames("kid\\walk",16,4);
 
         return new KeyedTileAnimation<PlayerAnimations>(
             0x625 * 0x20, animations);

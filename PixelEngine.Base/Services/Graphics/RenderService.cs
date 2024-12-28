@@ -210,8 +210,18 @@
 
         for (int x = 0; x < pixelsWide; x++)
         {
-            if (x > 0 && (x % tileSize) == 0)
-                columnTileBegin += sprite.VSize + 1;
+            if ((x % tileSize) == 0)
+            {
+                var column = x / tileSize;
+
+                if (sprite.HorizontalFlip)
+                    column = sprite.HSize - column;
+
+                columnTileBegin = (column * (sprite.VSize + 1));
+
+                if (sprite.VerticalFlip)
+                    columnTileBegin += (sprite.VSize);
+            }
 
             tileNumber = columnTileBegin;
 
@@ -222,7 +232,10 @@
 
                 if(y > 0 && (y % tileSize) == 0)
                 {
-                    tileNumber++;
+                    if (sprite.VerticalFlip)
+                        tileNumber--;
+                    else
+                        tileNumber++;
                 }
       
                 if (screenX < 0 || screenX >= _specs.ScreenWidth)
@@ -238,18 +251,11 @@
                     pixelX = x % tileSize;
                     pixelY = y % tileSize;
 
-                    // tileX = srcX - ((srcX / tileSize) * tileSize);
-                    //  tileY = srcY - ((srcY / tileSize) * tileSize);
+                    if(sprite.HorizontalFlip)
+                        pixelX = tileSize - pixelX - 1;
 
-                    //if (sprite.HorizontalFlip)
-                    //    pixelX = (tileX * tileSize) + (tileSize - (x % tileSize) - 1);
-                    //else
-                    //    pixelX = (tileX * tileSize) + (x % _specs.TileSize);
-
-                    //if (sprite.VerticalFlip)
-                    //    pixelY = (tileY * tileSize) + (tileSize - (y % tileSize) - 1);
-                    //else
-                    //    pixelY = (tileY * tileSize) + (y % tileSize);
+                    if (sprite.VerticalFlip)
+                        pixelY = tileSize - pixelY - 1;
 
                     colorValue = PatternTable.TilePixel(sprite.Tile + tileNumber, pixelX, pixelY);
 

@@ -5,6 +5,7 @@
     public static byte[][] LoadAll(string folder) =>
         new DirectoryInfo($"{ContentFolder}/{folder}")
             .GetFiles("*.*")
+            .OrderBy(x=>x.Name)
             .Select(p=> File.ReadAllBytes(p.FullName))
             .ToArray();
 

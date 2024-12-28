@@ -31,11 +31,13 @@ ulong frameNumber = 0;
 
 var waterWaver = new WaterWaver(layers.Background, 128, 200);
 
-
+//var debugAnimation = Workbench.CreateDebugAnimation("kid\\walk", 0x625);
+//frameAnimator.AddAnimation(debugAnimation);
 var playerAnimations = Workbench.LoadPlayerAnimations();
 frameAnimator.AddAnimation(playerAnimations);
 
 clockString.Text = "1:23";
+coreRenderService.Sprites[11].HorizontalPos += 32;
 
 while (windowManager.Window.IsOpen)
 {
@@ -46,14 +48,27 @@ while (windowManager.Window.IsOpen)
 
     windowManager.DispatchEvents();
 
+    //if (inputManager.Player1.KeyPressed(GenesisPadButtons.Right))
+    //{
+    //    debugAnimation.GameFramesRemaining = 0;
+    //}
+    //else if (inputManager.Player1.KeyPressed(GenesisPadButtons.Left))
+    //{
+    //    debugAnimation.CurrentFrameNumber-=2;
+    //    debugAnimation.GameFramesRemaining = 0;
+    //}
 
-    if(inputManager.Player1.KeyDown(GenesisPadButtons.Left))
+   // renderService.DebugString = $"FRAME {debugAnimation.CurrentFrameNumber}";
+
+    if (inputManager.Player1.KeyDown(GenesisPadButtons.Left))
     {
+        coreRenderService.Sprites[11].HorizontalFlip = true;
         coreRenderService.Sprites[11].HorizontalPos--;
         playerAnimations.CurrentAnimation = PlayerAnimations.Walk;
     }
     else if (inputManager.Player1.KeyDown(GenesisPadButtons.Right))
     {
+        coreRenderService.Sprites[11].HorizontalFlip = false;
         coreRenderService.Sprites[11].HorizontalPos++;
         playerAnimations.CurrentAnimation = PlayerAnimations.Walk;
     }

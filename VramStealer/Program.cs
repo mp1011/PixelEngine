@@ -26,13 +26,13 @@ var sampleVram = File.ReadAllBytes("vram.ram");
 var vramAddress = ScanMemory(gensProcessHandle, sampleVram.Take(10).ToArray());
 
 Console.WriteLine("Vram found, press any key to begin recording");
+Console.ReadKey();
 
-var recordedFrames = RecordVramSection(gensProcessHandle, vramAddress, 0x625, 0x631,32);
-
+Console.WriteLine("Recording...");
 int num = 0;
-foreach(var frame in recordedFrames)
+foreach(var snapshot in RecordVramSection(gensProcessHandle, vramAddress, 0x625, 0x631))
 {
-    File.WriteAllBytes($"D:\\GitHub\\PixelEngine\\PixelEngine.SampleGame\\Content\\SampleVRAM\\batch\\kid_walk\\out_{num}.ram", frame);
+    File.WriteAllBytes($"D:\\GitHub\\PixelEngine\\PixelEngine.SampleGame\\Content\\SampleVRAM\\batch\\kid\\out_{num.ToString("00")}.ram", snapshot);
     num++;
 }
 
@@ -90,7 +90,7 @@ byte[] ReadTileMemory(IntPtr processHandle, int vramAddress, int tileStart, int 
 }
 
 
-List<byte[]> RecordVramSection(IntPtr processHandle, int vramAddress, int tileStart, int tileEnd, int maxFrames)
+IEnumerable<byte[]> RecordVramSection(IntPtr processHandle, int vramAddress, int tileStart, int tileEnd)
 {
     int tileLength = (tileEnd - tileStart) + 1;
 
@@ -100,10 +100,22 @@ List<byte[]> RecordVramSection(IntPtr processHandle, int vramAddress, int tileSt
     {
         var tiles = ReadTileMemory(processHandle, vramAddress, tileStart, tileLength);
 
-        if (snapshots.Count == 0 || !Enumerable.SequenceEqual(snapshots.Last(), tiles))
-            snapshots.Add(tiles);
+        bool alreadyTaken = false;
+        foreach(var snapshot in snapshots)
+        {
+            if(Enumerable.SequenceEqual(snapshot, tiles))
+            {
+                alreadyTaken = true; 
+                break;
+            }
+        }
 
-        if (snapshots.Count == maxFrames)
-            return snapshots;
+        if(alreadyTaken)
+            continue;
+
+        Console.WriteLine("Snapshot taken");
+        snapshots.Add(tiles);
+
+        yield return tiles;
     }
 }

@@ -5,6 +5,13 @@
     private readonly SfmlWindowManager _windowManager;
     private RectangleShape _shape;
     private FrameRateDisplay _frameRateDisplay = new FrameRateDisplay();
+    private DebugString _debugString = new DebugString();
+
+    public string DebugString
+    {
+        get => _debugString.Text;
+        set => _debugString.Text = value;
+    }
 
     public SfmlRenderService(Specs specs, SfmlWindowManager windowManager, RenderService renderService)
     {
@@ -24,6 +31,7 @@
         window.Clear();
         window.Draw(_shape);
         _frameRateDisplay.Draw(window);
+        _debugString.Draw(window);
         window.Display();
     }
 }

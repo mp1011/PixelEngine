@@ -1,10 +1,15 @@
 ﻿public abstract class PlayerInput<TKeys> where TKeys:struct
 {
-    protected TKeys _previous = default, _current = default;
+    private TKeys _previous = default, _current = default;
 
+    protected abstract bool KeyDown(TKeys keys, TKeys check);
 
-    public abstract bool KeyDown(TKeys keys);
-    public abstract bool KeyUp(TKeys keys);
+    public bool KeyDown(TKeys key) => KeyDown(_current, key);
+
+    public bool KeyPressed(TKeys key)
+    {
+        return KeyDown(_current, key) && !KeyDown(_previous, key);
+    }
 
     public void Update(TKeys keys)
     {
@@ -15,14 +20,9 @@
 
 public class GenesisLikePlayerInput : PlayerInput<GenesisPadButtons>
 {
-    public override bool KeyDown(GenesisPadButtons keys)
+    protected override bool KeyDown(GenesisPadButtons keys, GenesisPadButtons check)
     {
-        return (_current & keys) == keys;
-    }
-
-    public override bool KeyUp(GenesisPadButtons keys)
-    {
-        return (_current & keys) == 0;
+        return (keys & check) == check;
     }
 }
 
