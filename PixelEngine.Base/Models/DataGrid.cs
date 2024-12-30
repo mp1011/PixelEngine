@@ -23,6 +23,24 @@
         Height = height;
     }
 
+    public void Rotate(int rX, int rY)
+    {
+        var copy = new ArrayDataGrid<T>(Width, Height);
+
+        copy.ForEach((x, y) =>
+        {
+            copy[x, y] = this[x, y];
+        });
+
+        ForEach((x, y) =>
+        {
+            var destX = (x + rX) % Width;
+            var destY = (y + rY) % Height;
+
+            this[destX, destY] = copy[x, y];
+        });
+    }
+
     public void ForEach(Action<int,int> action)
     {
         for(int y = 0; y < Height; y++)
@@ -30,6 +48,18 @@
             for(int x = 0; x < Width; x++)
             {
                 action(x, y);
+            }
+        }
+    }
+
+    public void ForEach(Point from, Point to, Action<int, int> action)
+    {
+        for (int y = from.Y; y <= to.Y; y++)
+        {
+            for (int x = from.X; x <= to.X; x++)
+            {
+                if(x >= 0 && y >= 0 && x < Width && y < Height)
+                    action(x, y);
             }
         }
     }

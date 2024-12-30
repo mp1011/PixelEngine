@@ -1,30 +1,39 @@
-﻿using Microsoft.VisualBasic;
-
-public class PlayerController
+﻿public class PlayerController
 {     
+    private readonly CollisionManager _collisionManager;
     private readonly InputManager _inputManager;
     private readonly KeyedTileAnimation<PlayerAnimations> _playerAnimations;
     private readonly MovingSprite _player;
+    private readonly SpriteCollider _collider;
+
     private bool _inSlide;
     private int _highJumpCounter;
 
-    public PlayerController(InputManager inputManager, KeyedTileAnimation<PlayerAnimations> playerAnimations, MovingSprite player)
+    public PlayerController(InputManager inputManager, KeyedTileAnimation<PlayerAnimations> playerAnimations, MovingSprite player,
+        CollisionManager collisionManager)
     {
         _inputManager = inputManager;
+        _collisionManager = collisionManager;
         _playerAnimations = playerAnimations;
         _player = player;
 
         _player.HorizontalMotion.Target = 0;
         _player.HorizontalMotion.Acceleration = MotionConstants.PlayerAccel;
         _player.VerticalMotion.Acceleration = MotionConstants.PlayerGravity;
+
+
+        _collider = new SpriteCollider(
+            HorizontalCollider: new Rectangle(0, 4, _player.PixelWidth, _player.PixelHeight - 8),
+            VerticalCollider: new Rectangle(4, 0, _player.PixelWidth - 8, _player.PixelHeight));
     }
 
     public double PlayerMoveSpeed => _inputManager.Player1.KeyDown(GamepadButtons.A) ? MotionConstants.PlayerRunSpeed : MotionConstants.PlayerWalkSpeed;
 
-    public bool IsOnGround => _player.Sprite.VerticalPos == 260;
-
+   
     public void Update()
     {
+        var isOnGround = _collisionManager.CheckBlockCollision(_player, _collider).IsOnGround;
+
         if (_player.HorizontalMotion.Speed == 0)
             _playerAnimations.DurationScale = 1.0;
         else
@@ -52,9 +61,12 @@ public class PlayerController
 
         if(!_inSlide)
         {
-            if(!IsOnGround)
+            if(!isOnGround)
             {
-                _player.Sprite.HorizontalFlip = _player.HorizontalMotion.Speed < 0;
+                if (_player.HorizontalMotion.Speed != 0)
+                {
+                    _player.Sprite.HorizontalFlip = _player.HorizontalMotion.Speed < 0;
+                }
             }
             else if (_player.HorizontalMotion.Target < 0 && _player.HorizontalMotion.Speed > 0)
             {
@@ -83,36 +95,30 @@ public class PlayerController
                 _playerAnimations.CurrentAnimation = PlayerAnimations.Slide;
         }
 
-        if(IsOnGround && _inputManager.Player1.KeyDown(GamepadButtons.B))
-        {
-            _player.VerticalMotion.Target = MotionConstants.PlayerFallSpeed;
+        if(isOnGround && _inputManager.Player1.KeyPressed(GamepadButtons.B))
+        {            
             _player.VerticalMotion.Speed = MotionConstants.PlayerJumpSpeed;
             _highJumpCounter = 0;
         }
 
 
-        if(!IsOnGround)
+        if (!isOnGround)
         {
-            if(_inputManager.Player1.KeyDown(GamepadButtons.B) && _highJumpCounter < MotionConstants.HighJumpFrames)
+            _player.VerticalMotion.Target = MotionConstants.PlayerFallSpeed;
+            if (_inputManager.Player1.KeyDown(GamepadButtons.B) && _highJumpCounter < MotionConstants.HighJumpFrames)
             {
                 _highJumpCounter++;
                 _player.VerticalMotion.Speed = MotionConstants.PlayerJumpSpeed;
             }
-             
+
             _inSlide = false;
             if (_player.VerticalMotion.Speed < 0)
                 _playerAnimations.CurrentAnimation = PlayerAnimations.Jump;
             else
                 _playerAnimations.CurrentAnimation = PlayerAnimations.Fall;
-        }
 
-        //temp
-        if(_player.Sprite.VerticalPos > 260)
-        {
-            _player.Sprite.VerticalPos = 260;
-            _player.RealY = 260;
-            _player.VerticalMotion.Target = 0;
-            _player.VerticalMotion.Speed = 0;
+            if (_player.HorizontalMotion.Speed != 0)
+                _player.Sprite.HorizontalFlip = _player.HorizontalMotion.Speed < 0;
         }
 
         _player.Update();

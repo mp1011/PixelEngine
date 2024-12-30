@@ -23,7 +23,9 @@ public class Workbench
         layers.Background.HScrollTable = new ScrollTable(ScrollTableType.Line, true, specs);
         layers.Background.VScrollTable = new ScrollTable(ScrollTableType.FullScreen, false, specs);
 
-        layers.Foreground.VScrollTable.SetAll(104);
+        layers.Foreground.Tiles.Rotate(0, 19);
+
+     //   layers.Foreground.VScrollTable.SetAll(104);
         layers.Background.VScrollTable.SetAll(16);
     }
 
@@ -85,6 +87,22 @@ public class Workbench
 
         return new KeyedTileAnimation<PlayerAnimations>(
             0x625 * 0x20, animations);
+    }
+
+    public static CollisionMap CreateCollisionMap()
+    {
+        var map = new CollisionMap(64, 64);
+
+        map.ForEach((x, y) =>
+        {
+            if ( x > 14 && x < 34 && (y == 11 || y == 12))
+                map[x, y] = CollisionType.Solid;
+
+            if (y == 21)
+                map[x, y] = CollisionType.Solid;
+        });
+
+        return map;
     }
 
 }

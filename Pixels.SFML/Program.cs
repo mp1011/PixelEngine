@@ -39,10 +39,14 @@ frameAnimator.AddAnimation(playerAnimations);
 clockString.Text = "1:23";
 coreRenderService.Sprites[11].HorizontalPos += 32;
 
+var collisionMap = Workbench.CreateCollisionMap();
+var collisionManager = new CollisionManager(collisionMap, layers.Foreground, specs);
+
 var playerController = new PlayerController(
     inputManager,
     playerAnimations,
-    new MovingSprite(coreRenderService.Sprites[11]));
+    new MovingSprite(coreRenderService.Sprites[11], specs),
+    collisionManager);
 
 while (windowManager.Window.IsOpen)
 {

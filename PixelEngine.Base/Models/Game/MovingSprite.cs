@@ -1,10 +1,17 @@
 ﻿public class MovingSprite
-{    
+{
+    private readonly Specs _specs;
+    
     public double RealX { get; set; }
     public double RealY { get; set; }
 
-    public MovingSprite(Sprite sprite)
+    public int PixelWidth => (Sprite.HSize + 1) * _specs.TileSize;
+    public int PixelHeight => (Sprite.VSize + 1) * _specs.TileSize;
+
+
+    public MovingSprite(Sprite sprite, Specs specs)
     {
+        _specs = specs;
         Sprite = sprite;
         HorizontalMotion = new AcceleratedMotion();
         VerticalMotion = new AcceleratedMotion();
