@@ -20,7 +20,7 @@
         double relY = 0;
         for(int y = _yStart; y <= _yEnd; y++)
         {
-            _layer.HScrollTable.Values[(y - scrollOffset).NMod(_layer.HScrollTable.Values.Length)] += (short)(4 * Math.Sin(y + _animationValue));
+            _layer.HScrollTable.Values[(y - scrollOffset).NMod(_layer.HScrollTable.Values.Length)] += (ushort)(4 * Math.Sin(y + _animationValue));
 
             relY += 0.001;
         }

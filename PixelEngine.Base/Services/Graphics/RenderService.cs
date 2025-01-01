@@ -1,10 +1,11 @@
 ﻿public class RenderService
 {
     private readonly Specs _specs;
-    private readonly LayerGroup _layers;
     private readonly Palette[] _palettes;
     private byte[] _pixelBuffer;
     private int _hInterruptLinesRemaining;
+
+    public LayerGroup Layers { get; set; }
 
     public byte HInterruptCounter { get; set; }
    
@@ -14,12 +15,18 @@
 
     public PatternTable PatternTable { get; }
 
-    public RenderService(Specs specs, LayerGroup layers)
+    public RenderService(Specs specs)
     {
         _specs = specs;
         PatternTable = new PatternTable(specs);
         _pixelBuffer = new byte[specs.ScreenWidth * specs.ScreenHeight * Color.Bytes];
-        _layers = layers;
+
+        Layers = new LayerGroup(
+            new ScrollingLayer(specs, 64, 32),
+            new ScrollingLayer(specs, 64, 32),
+            new Layer(specs, 32, 32),
+            new Layer(specs, 4, 4) 
+            );
 
         _palettes = Enumerable.Range(0, specs.NumPalettes)
                               .Select(p => new Palette(specs.ColorsPerPalette))
@@ -51,15 +58,15 @@
         byte colorValue = 0;
         Tile tile = new();
 
-        short bgScrollX = 0, bgScrollY = 0, fgScrollX=0, fgScrollY = 0;
-        var bgPixelsWidth = _layers.Background.PixelSize.Width;
-        var bgPixelsHeight = _layers.Background.PixelSize.Height;
-        var fgPixelsWidth = _layers.Foreground.PixelSize.Width;
-        var fgPixelsHeight = _layers.Foreground.PixelSize.Height;
+        ushort bgScrollX = 0, bgScrollY = 0, fgScrollX=0, fgScrollY = 0;
+        var bgPixelsWidth = Layers.Background.PixelSize.Width;
+        var bgPixelsHeight = Layers.Background.PixelSize.Height;
+        var fgPixelsWidth = Layers.Foreground.PixelSize.Width;
+        var fgPixelsHeight = Layers.Foreground.PixelSize.Height;
         var tileSize = _specs.TileSize;
 
-        var fg = _layers.Foreground;
-        var bg = _layers.Background;
+        var fg = Layers.Foreground;
+        var bg = Layers.Background;
 
         bool drewFgPixel = false;
 
@@ -270,18 +277,18 @@
 
     private bool PixelAvailableForLowPrioritySprite(int screenX, int screenY)
     {
-        var bgScrollV = _layers.Background.VScrollTable.ValueForLine(screenX);
-        var bgScrollH = _layers.Background.HScrollTable.ValueForLine(screenY);
-        var fgScrollV = _layers.Foreground.VScrollTable.ValueForLine(screenX);
-        var fgScrollH = _layers.Foreground.HScrollTable.ValueForLine(screenY);
+        var bgScrollV = Layers.Background.VScrollTable.ValueForLine(screenX);
+        var bgScrollH = Layers.Background.HScrollTable.ValueForLine(screenY);
+        var fgScrollV = Layers.Foreground.VScrollTable.ValueForLine(screenX);
+        var fgScrollH = Layers.Foreground.HScrollTable.ValueForLine(screenY);
 
-        var bgX = (screenX + bgScrollH) % (_layers.Background.PixelSize.Width);
-        var bgY = (screenY + bgScrollV) % (_layers.Background.PixelSize.Height);
-        var fgX = (screenX + fgScrollH) % (_layers.Foreground.PixelSize.Width);
-        var fgY = (screenY + fgScrollV) % (_layers.Foreground.PixelSize.Height);
+        var bgX = (screenX + bgScrollH) % (Layers.Background.PixelSize.Width);
+        var bgY = (screenY + bgScrollV) % (Layers.Background.PixelSize.Height);
+        var fgX = (screenX + fgScrollH) % (Layers.Foreground.PixelSize.Width);
+        var fgY = (screenY + fgScrollV) % (Layers.Foreground.PixelSize.Height);
 
-        var bgTile = _layers.Background.Tiles[bgX/ _specs.TileSize, bgY / _specs.TileSize];
-        var fgTile = _layers.Foreground.Tiles[fgX / _specs.TileSize, fgY / _specs.TileSize];
+        var bgTile = Layers.Background.Tiles[bgX/ _specs.TileSize, bgY / _specs.TileSize];
+        var fgTile = Layers.Foreground.Tiles[fgX / _specs.TileSize, fgY / _specs.TileSize];
 
         var tileSize = _specs.TileSize;
         if (bgTile.Priority)

@@ -38,14 +38,14 @@
         // todo, calc this offset
         _camera.WorldLocation = new Point((int)_focus.WorldX - 160, (int)_focus.WorldY - 128);   
         
-        _foreground.HScrollTable.SetAll((short)_camera.WorldLocation.X);
-        _foreground.VScrollTable.SetAll((short)_camera.WorldLocation.Y);
+        _foreground.HScrollTable.SetAll((ushort)_camera.WorldLocation.X);
+        _foreground.VScrollTable.SetAll((ushort)_camera.WorldLocation.Y);
 
         int line = 0;
-        short vScroll = 0;
+        ushort vScroll = 0;
         foreach (var bgScrollLayer in _backgroundVScrollLayers)
         {
-            vScroll = (short)(_camera.WorldLocation.Y * bgScrollLayer.ScrollFactor);
+            vScroll = (ushort)(_camera.WorldLocation.Y * bgScrollLayer.ScrollFactor);
             _background.VScrollTable.SetRange(line, bgScrollLayer.Lines, vScroll);
             line += bgScrollLayer.Lines;
         }
@@ -54,7 +54,7 @@
         foreach (var bgScrollLayer in _backgroundHScrollLayers)
         {
             int adjustedLine = line - vScroll;
-            _background.HScrollTable.SetRange(adjustedLine, bgScrollLayer.Lines, (short)(_camera.WorldLocation.X * bgScrollLayer.ScrollFactor));
+            _background.HScrollTable.SetRange(adjustedLine, bgScrollLayer.Lines, (ushort)(_camera.WorldLocation.X * bgScrollLayer.ScrollFactor));
             line += bgScrollLayer.Lines;
         }
 

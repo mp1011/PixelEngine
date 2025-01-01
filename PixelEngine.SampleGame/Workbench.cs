@@ -1,6 +1,4 @@
-﻿using System.Runtime.Intrinsics.Arm;
-
-public class Workbench
+﻿public class Workbench
 {
     public static void SingleTileTest(LayerGroup layers, RenderService coreRenderService, Specs specs)
     {
@@ -16,7 +14,7 @@ public class Workbench
         GensVramImporter.LoadLayer(DiskResourceLoader.Load("SampleVRAM\\kc.ram"), layers.Background, 0xE000);
         GensVramImporter.LoadLayer(DiskResourceLoader.Load("SampleVRAM\\kc.ram"), layers.Foreground, 0);
         GensVramImporter.LoadColors(DiskResourceLoader.Load("SampleVRAM\\colors.ram"), coreRenderService, specs);
-        GensVramImporter.LoadSprites(DiskResourceLoader.Load("SampleVRAM\\kc.ram"), 0x1000, specs.NumSprites, coreRenderService.Sprites);
+        GensVramImporter.LoadSprites(DiskResourceLoader.Load("SampleVRAM\\kc.ram"), 0x1000, coreRenderService.Sprites);
 
         layers.Foreground.HScrollTable = new ScrollTable(ScrollTableType.Line, true, layers.Foreground.PixelSize.Width, specs);
         layers.Foreground.VScrollTable = new ScrollTable(ScrollTableType.FullScreen, false, layers.Foreground.PixelSize.Height, specs);

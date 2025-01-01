@@ -56,7 +56,7 @@
     <None Update="Content\SampleVRAM\batch\9.ram">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
-    <None Update="Content\SampleVRAM\colors.ram">
+    <None Update="Content\SampleVRAM\kc.cram">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Content\SampleVRAM\kc.ram">

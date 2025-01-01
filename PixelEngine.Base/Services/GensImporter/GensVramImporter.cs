@@ -9,9 +9,9 @@
         }
     }
 
-    public static void LoadSprites(byte[] vramData, int vramIndex, int numSprites, Sprite[] destination)
+    public static void LoadSprites(byte[] vramData, int vramIndex, Sprite[] destination)
     {
-        for (int i = 0; i < numSprites; i++)
+        for (int i = 0; i < destination.Length; i++)
         {
             destination[i] = new Sprite(vramData, vramIndex);
             vramIndex += 8;
@@ -24,13 +24,13 @@
         for (int i = 0; i < specs.NumPalettes; i++)
         {
             var palette = renderService.Palette(i);
-            LoadColors(bitReader, palette);
+            LoadColors(bitReader, palette, specs);
         }
     }
 
-    private static void LoadColors(BitStreamReader bitReader, Palette palette)
+    private static void LoadColors(BitStreamReader bitReader, Palette palette, Specs specs)
     {
-        for (int colorIndex = 0; colorIndex < 16; colorIndex++)
+        for (int colorIndex = 0; colorIndex < specs.ColorsPerPalette; colorIndex++)
         {
             bitReader.ReadNextBits(1);
 

@@ -9,6 +9,12 @@
         _data = data;
     }
 
+    public void Seek(int bytes)
+    {
+        _byteIndex = bytes;
+        _bitIndex = 0;
+    }
+
     public byte ReadNextBits(int bits)
     {
         if(_bitIndex + bits > 8)
