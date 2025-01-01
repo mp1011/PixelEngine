@@ -27,8 +27,7 @@ public class Workbench
 
         FakeFillLayer(layers.Foreground);
 
-     //   layers.Foreground.VScrollTable.SetAll(104);
-        layers.Background.VScrollTable.SetAll(16);
+       // layers.Background.VScrollTable.SetAll(32);
     }
 
     private static void FakeFillLayer(ScrollingLayer layer)

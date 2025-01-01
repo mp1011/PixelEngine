@@ -47,6 +47,20 @@ public class ScrollTable
         }
     }
 
+    public void SetRange(int start, int count, short value)
+    {
+        int index = start;
+        while(count-- > 0)
+        {
+            if (index >= 0 && index < Values.Length)
+            {
+                Values[index] = value;
+                Values[index] = Values[index].NMod(_limit);
+            }
+            index++;
+        }
+    }
+
     public void AddAll(short value)
     {
         for (int i = 0; i < Values.Length; i++)

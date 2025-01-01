@@ -53,14 +53,24 @@ var playerController = new PlayerController(
     player,
     collisionManager);
 
-var scroller = new StreamScroller(layers.Background, layers.Foreground, player, coordinateTranslator, camera, specs);
+var bgHScrollLayers = new BackgroundScrollLayer[]
+{
+    new BackgroundScrollLayer(56, 0.2),
+    new BackgroundScrollLayer(148, 0.4),
+};
+
+var bgVScrollLayers = new BackgroundScrollLayer[]
+{
+    new BackgroundScrollLayer(1, 0.5),
+};
+
+var scroller = new StreamScroller(layers.Background, layers.Foreground, player, coordinateTranslator, camera, bgHScrollLayers, bgVScrollLayers, specs);
 while (windowManager.Window.IsOpen)
 {
     inputManager.Update();
     frameAnimator.Update(frameNumber);
     clock.Update(frameNumber);
-    waterWaver.Update();
-
+  
     windowManager.DispatchEvents();
 
     //if (inputManager.Player1.KeyPressed(GenesisPadButtons.Right))
@@ -77,6 +87,7 @@ while (windowManager.Window.IsOpen)
 
     playerController.Update();
     scroller.Update();
+    waterWaver.Update();
 
     renderService.DisplayFrame();
     frameNumber++;

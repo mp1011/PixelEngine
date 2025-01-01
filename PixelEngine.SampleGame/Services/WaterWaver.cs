@@ -15,10 +15,12 @@
     {
         _animationValue += 0.05;
 
+        int scrollOffset = _layer.VScrollTable.Values[0];
+
         double relY = 0;
         for(int y = _yStart; y <= _yEnd; y++)
         {
-            _layer.HScrollTable.Values[y] = (short)(4 * Math.Sin(y + _animationValue));
+            _layer.HScrollTable.Values[(y - scrollOffset).NMod(_layer.HScrollTable.Values.Length)] += (short)(4 * Math.Sin(y + _animationValue));
 
             relY += 0.001;
         }
