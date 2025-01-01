@@ -1,34 +1,40 @@
-﻿public class CoordinateTranslator
+﻿/// <summary>
+/// Sprite coordinates: 512x512, with visible area at 128,128
+/// Screen coordinates: 0,0 = top left
+/// World coordinates
+/// </summary>
+public class CoordinateTranslator
 {
     private readonly ScrollingLayer _layer;
+    private readonly Camera _camera;
 
     public Point ScrollSeamCorner { get; set; } = new Point(0,0);
 
 
-    public CoordinateTranslator(ScrollingLayer layer)
+    public CoordinateTranslator(ScrollingLayer layer, Camera camera)
     {
+        _camera = camera;
         _layer = layer;
     }
 
-    public Point SpriteToWorld(Sprite sprite) => SpriteToWorld(new Point(sprite.HorizontalPos, sprite.VerticalPos));
+    public Point SpriteToScreen(Sprite sprite) => SpriteToScreen(new Point(sprite.HorizontalPos, sprite.VerticalPos));
+    public Point SpriteToScreen(Point spritePosition) => spritePosition - new Point(128, 128);
 
+    public Point SpriteToWorld(Sprite sprite) => SpriteToWorld(new Point(sprite.HorizontalPos, sprite.VerticalPos));
     public Point SpriteToWorld(Point spritePosition)
     {
-        var spriteScreenPosition = spritePosition - new Point(128, 128);
-
-        //var layerScreenPosition = new Point(
-        //    _layer.HScrollTable.Values[0],
-        //    _layer.VScrollTable.Values[0]);
-       
-        // todo, implement given position of layer scroll seam
-        return spriteScreenPosition;
+        var spriteScreenPosition = SpriteToScreen(spritePosition);
+        return _camera.WorldLocation + spriteScreenPosition;
     }
 
     public Point WorldToSprite(Point worldPosition)
     {
-        return worldPosition + new Point(128, 128);
-        // todo, fully implement
+        var screenPosition = worldPosition - _camera.WorldLocation;
+        return screenPosition + new Point(128, 128);
     }
     
+    public Point WorldToSprite(int worldX, int worldY) =>  WorldToSprite(new Point(worldX, worldY));
+    public Point WorldToSprite(double worldX, double worldY) => WorldToSprite(new Point((int)worldX, (int)worldY));
+
 }
 

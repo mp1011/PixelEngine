@@ -11,6 +11,17 @@
         return number % mod;
     }
 
+    public static short NMod(this short number, short mod)
+    {
+        if (number >= 0)
+            return (short)(number % mod);
+
+        while (number < 0)
+            number += mod;
+
+        return (short)(number % mod);
+    }
+
     public static int Clamp(this int number, int min, int max)
     {
         if (number < min)

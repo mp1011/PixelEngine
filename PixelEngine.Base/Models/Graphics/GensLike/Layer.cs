@@ -24,8 +24,8 @@ public class ScrollingLayer : Layer
 {
     public ScrollingLayer(Specs specs, int tilesX, int tilesY) : base(specs, tilesX, tilesY)
     {
-        HScrollTable = new ScrollTable(ScrollTableType.FullScreen, true, specs);
-        VScrollTable = new ScrollTable(ScrollTableType.FullScreen, false, specs);
+        HScrollTable = new ScrollTable(ScrollTableType.FullScreen, true, PixelSize.Width, specs);
+        VScrollTable = new ScrollTable(ScrollTableType.FullScreen, false, PixelSize.Height, specs);
     }
 
     public ScrollTable HScrollTable { get; set; }

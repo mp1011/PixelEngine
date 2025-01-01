@@ -7,13 +7,16 @@
 
 public class ScrollTable
 {
+    private readonly short _limit;
     public ScrollTableType Type { get; }
     public short[] Values { get; }
 
-    public ScrollTable(ScrollTableType type, bool horizontal, Specs specs)
+    public ScrollTable(ScrollTableType type, bool horizontal, int limit, Specs specs)
     {
         int lines = horizontal ? specs.ScreenHeight : specs.ScreenWidth;
         Type = type;
+
+        _limit = (short)limit;
 
         int numValues = type switch
         {
@@ -40,6 +43,7 @@ public class ScrollTable
         for(int i = 0; i < Values.Length; i++)
         {
             Values[i] = value;
+            Values[i] = Values[i].NMod(_limit);
         }
     }
 
@@ -48,6 +52,7 @@ public class ScrollTable
         for (int i = 0; i < Values.Length; i++)
         {
             Values[i] += value;
+            Values[i] = Values[i].NMod(_limit);
         }
     }
 }

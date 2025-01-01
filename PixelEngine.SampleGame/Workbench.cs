@@ -18,15 +18,25 @@ public class Workbench
         GensVramImporter.LoadColors(DiskResourceLoader.Load("SampleVRAM\\colors.ram"), coreRenderService, specs);
         GensVramImporter.LoadSprites(DiskResourceLoader.Load("SampleVRAM\\kc.ram"), 0x1000, specs.NumSprites, coreRenderService.Sprites);
 
-        layers.Foreground.HScrollTable = new ScrollTable(ScrollTableType.Line, true, specs);
-        layers.Foreground.VScrollTable = new ScrollTable(ScrollTableType.FullScreen, false, specs);
-        layers.Background.HScrollTable = new ScrollTable(ScrollTableType.Line, true, specs);
-        layers.Background.VScrollTable = new ScrollTable(ScrollTableType.FullScreen, false, specs);
+        layers.Foreground.HScrollTable = new ScrollTable(ScrollTableType.Line, true, layers.Foreground.PixelSize.Width, specs);
+        layers.Foreground.VScrollTable = new ScrollTable(ScrollTableType.FullScreen, false, layers.Foreground.PixelSize.Height, specs);
+        layers.Background.HScrollTable = new ScrollTable(ScrollTableType.Line, true, layers.Background.PixelSize.Width, specs);
+        layers.Background.VScrollTable = new ScrollTable(ScrollTableType.FullScreen, false, layers.Background.PixelSize.Height, specs);
 
         layers.Foreground.Tiles.Rotate(0, 19);
 
+        FakeFillLayer(layers.Foreground);
+
      //   layers.Foreground.VScrollTable.SetAll(104);
         layers.Background.VScrollTable.SetAll(16);
+    }
+
+    private static void FakeFillLayer(ScrollingLayer layer)
+    {
+        layer.Tiles.ForEach((x, y) =>
+        {
+            layer.Tiles[x, y] = layer.Tiles[x % 40, y % 30];
+        });
     }
 
     public static SimpleTileAnimation ExtractTileAnimation(string subFolder, int tileStart, int tileEnd, int duration)
@@ -91,11 +101,11 @@ public class Workbench
 
     public static CollisionMap CreateCollisionMap()
     {
-        var map = new CollisionMap(64, 64);
+        var map = new CollisionMap(512, 64);
 
         map.ForEach((x, y) =>
         {
-            if ( x > 14 && x < 34 && (y == 11 || y == 12))
+            if ( x > 14 && x < 35 && (y == 11 || y == 12))
                 map[x, y] = CollisionType.Solid;
 
             if (y == 21)

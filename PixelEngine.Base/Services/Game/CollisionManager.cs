@@ -4,9 +4,9 @@
     private readonly CoordinateTranslator _coordinateTranslator;
     private readonly CollisionMap _collisionMap;
 
-    public CollisionManager(CollisionMap collisionMap, ScrollingLayer layer, Specs specs)
+    public CollisionManager(CollisionMap collisionMap, CoordinateTranslator coordinateTranslator, Specs specs)
     {
-        _coordinateTranslator = new CoordinateTranslator(layer);
+        _coordinateTranslator = coordinateTranslator;
         _coordinateTranslator.ScrollSeamCorner = new Point(0, 0);
         _collisionMap = collisionMap;
         _specs = specs;
@@ -16,7 +16,7 @@
     {
         var response = new CollisionResponse();
 
-        var worldPosition = _coordinateTranslator.SpriteToWorld(movingSprite.Sprite);
+        var worldPosition = movingSprite.WorldLocation;
         var topLeftTile = worldPosition / _specs.TileSize;
         var bottomRightTile = worldPosition.Add(movingSprite.PixelWidth, movingSprite.PixelHeight) / _specs.TileSize;
 
@@ -53,8 +53,7 @@
                             movingSprite.VerticalMotion.Target = 0;
 
                             worldPosition = worldPosition.Add(0, yCorrection);
-                            var newPos = _coordinateTranslator.WorldToSprite(worldPosition);
-                            movingSprite.RealY = newPos.Y;
+                            movingSprite.WorldY = worldPosition.Y;
 
                             verticalHitbox = collider.GetVerticalHitbox(worldPosition);
                             horizontalHitbox = collider.GetHorizontalHitbox(worldPosition);
@@ -84,8 +83,7 @@
                             movingSprite.HorizontalMotion.Target = 0;
 
                             worldPosition = worldPosition.Add(xCorrection, 0);
-                            var newPos = _coordinateTranslator.WorldToSprite(worldPosition);
-                            movingSprite.RealX = newPos.X;
+                            movingSprite.WorldX = worldPosition.X;
 
                             verticalHitbox = collider.GetVerticalHitbox(worldPosition);
                             horizontalHitbox = collider.GetHorizontalHitbox(worldPosition);

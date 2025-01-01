@@ -39,15 +39,21 @@ frameAnimator.AddAnimation(playerAnimations);
 clockString.Text = "1:23";
 coreRenderService.Sprites[11].HorizontalPos += 32;
 
-var collisionMap = Workbench.CreateCollisionMap();
-var collisionManager = new CollisionManager(collisionMap, layers.Foreground, specs);
+var camera = new Camera();
 
+var coordinateTranslator = new CoordinateTranslator(layers.Foreground, camera);
+var collisionMap = Workbench.CreateCollisionMap();
+var collisionManager = new CollisionManager(collisionMap, coordinateTranslator, specs);
+
+
+var player = new MovingSprite(coreRenderService.Sprites[11], coordinateTranslator, specs);
 var playerController = new PlayerController(
     inputManager,
     playerAnimations,
-    new MovingSprite(coreRenderService.Sprites[11], specs),
+    player,
     collisionManager);
 
+var scroller = new StreamScroller(layers.Background, layers.Foreground, player, coordinateTranslator, camera, specs);
 while (windowManager.Window.IsOpen)
 {
     inputManager.Update();
@@ -70,6 +76,7 @@ while (windowManager.Window.IsOpen)
     renderService.DebugString = Debug.Text1;
 
     playerController.Update();
+    scroller.Update();
 
     renderService.DisplayFrame();
     frameNumber++;
