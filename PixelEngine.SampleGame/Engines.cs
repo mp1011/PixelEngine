@@ -2,7 +2,8 @@
 {
     private readonly string _saveStateFilename;
     private readonly string _cramFilename; //savestate doesn't include all color data
-    public StaticEngine(string saveStateFilename, string cramFilename, RenderService renderService, Specs specs) : base(renderService, specs)
+    public StaticEngine(string saveStateFilename, string cramFilename, RenderService renderService, InputManager inputManager, Specs specs) 
+        : base(renderService, inputManager, specs)
     {
         _saveStateFilename = saveStateFilename;
         _cramFilename = cramFilename;
@@ -16,7 +17,30 @@
 
     public override void Update(ulong frameNumber)
     {
-        //nothing to do
+        short fSpeed = 8;
+        short bSpeed = 4;
+
+        if(_inputManager.Player1.KeyDown(GamepadButtons.Up))
+        {
+            _renderService.Layers.Background.VScrollTable.AddAll((short)-bSpeed);
+            _renderService.Layers.Foreground.VScrollTable.AddAll((short)-fSpeed);
+        }
+        else if (_inputManager.Player1.KeyDown(GamepadButtons.Down))
+        {
+            _renderService.Layers.Background.VScrollTable.AddAll(bSpeed);
+            _renderService.Layers.Foreground.VScrollTable.AddAll(fSpeed);
+        }
+
+        if (_inputManager.Player1.KeyDown(GamepadButtons.Left))
+        {
+            _renderService.Layers.Background.HScrollTable.AddAll((short)-bSpeed);
+            _renderService.Layers.Foreground.HScrollTable.AddAll((short)-fSpeed);
+        }
+        else if (_inputManager.Player1.KeyDown(GamepadButtons.Right))
+        {
+            _renderService.Layers.Background.HScrollTable.AddAll(bSpeed);
+            _renderService.Layers.Foreground.HScrollTable.AddAll(fSpeed);
+        }
     }
 }
 
@@ -30,8 +54,9 @@ public class KcMockup : Engine
     private Camera? _camera;
     private CoordinateTranslator? _coordinateTranslator;
     private StreamScroller? _streamScroller;
+    private PlayerController _playerController;
 
-    public KcMockup(RenderService renderService, Specs specs) : base(renderService, specs)
+    public KcMockup(RenderService renderService, InputManager inputManager, Specs specs) : base(renderService, inputManager, specs)
     {
     }
 
@@ -60,10 +85,9 @@ public class KcMockup : Engine
         var collisionMap = Workbench.CreateCollisionMap();
         var collisionManager = new CollisionManager(collisionMap, _coordinateTranslator, _specs);
 
-
         var player = new MovingSprite(_renderService.Sprites[11], _coordinateTranslator, _specs);
-        var playerController = new PlayerController(
-            null, //inputManager,
+        _playerController = new PlayerController(
+            _inputManager,
             playerAnimations,
             player,
             collisionManager);
@@ -85,7 +109,10 @@ public class KcMockup : Engine
 
     public override void Update(ulong frameNumber)
     {
-        _frameAnimator.Update(frameNumber);
-        _clock.Update(frameNumber);       
+        _frameAnimator!.Update(frameNumber);
+        _clock!.Update(frameNumber);
+        _streamScroller!.Update();
+        _playerController!.Update();
+        _waterWaver.Update();
     }
 }

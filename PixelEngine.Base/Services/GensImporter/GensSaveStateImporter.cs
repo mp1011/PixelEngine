@@ -183,7 +183,7 @@
         for(int strip = 0; strip < layers.Background.HScrollTable.Values.Length; strip++)
         {
             ReadScrollEntry(layers, true, fileData, location, strip);
-            location += 16;
+            location += 32;
         }
     }
 

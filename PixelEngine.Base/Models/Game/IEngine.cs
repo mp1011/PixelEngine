@@ -1,10 +1,12 @@
 ﻿public abstract class Engine
 {
-    protected RenderService _renderService;
     protected Specs _specs;
+    protected RenderService _renderService;   
+    protected InputManager _inputManager;
 
-    protected Engine(RenderService renderService, Specs specs)
+    protected Engine(RenderService renderService, InputManager inputManager, Specs specs)
     {
+        _inputManager = inputManager;
         _renderService = renderService;
         _specs = specs;
     }

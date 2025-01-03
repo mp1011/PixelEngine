@@ -21,6 +21,10 @@
             keys = keys & ~GamepadButtons.Left;
         if (e.Code == Keyboard.Key.Right)
             keys = keys & ~GamepadButtons.Right;
+        if (e.Code == Keyboard.Key.Up)
+            keys = keys & ~GamepadButtons.Up;
+        if (e.Code == Keyboard.Key.Down)
+            keys = keys & ~GamepadButtons.Down;
         if (e.Code == Keyboard.Key.A)
             keys = keys & ~GamepadButtons.A;
         if (e.Code == Keyboard.Key.S)
@@ -35,6 +39,10 @@
             keys = keys | GamepadButtons.Left;
         if (e.Code == Keyboard.Key.Right)
             keys = keys | GamepadButtons.Right;
+        if (e.Code == Keyboard.Key.Up)
+            keys = keys | GamepadButtons.Up;
+        if (e.Code == Keyboard.Key.Down)
+            keys = keys | GamepadButtons.Down;
         if (e.Code == Keyboard.Key.A)
             keys = keys | GamepadButtons.A;
         if (e.Code == Keyboard.Key.S)

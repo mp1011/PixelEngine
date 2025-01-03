@@ -58,7 +58,7 @@
         byte colorValue = 0;
         Tile tile = new();
 
-        ushort bgScrollX = 0, bgScrollY = 0, fgScrollX=0, fgScrollY = 0;
+        short bgScrollX = 0, bgScrollY = 0, fgScrollX=0, fgScrollY = 0;
         var bgPixelsWidth = Layers.Background.PixelSize.Width;
         var bgPixelsHeight = Layers.Background.PixelSize.Height;
         var fgPixelsWidth = Layers.Foreground.PixelSize.Width;

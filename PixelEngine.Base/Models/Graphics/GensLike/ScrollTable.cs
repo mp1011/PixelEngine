@@ -7,16 +7,16 @@
 
 public class ScrollTable
 {
-    private readonly ushort _limit;
+    private readonly short _limit;
     public ScrollTableType Type { get; }
-    public ushort[] Values { get; }
+    public short[] Values { get; }
 
     public ScrollTable(ScrollTableType type, bool horizontal, int limit, Specs specs)
     {
         int lines = horizontal ? specs.ScreenHeight : specs.ScreenWidth;
         Type = type;
 
-        _limit = (ushort)limit;
+        _limit = (short)limit;
 
         int numValues = type switch
         {
@@ -25,10 +25,10 @@ public class ScrollTable
             _ => lines
         };
 
-        Values = Enumerable.Repeat((ushort)0, numValues).ToArray();
+        Values = Enumerable.Repeat((short)0, numValues).ToArray();
     }
 
-    public ushort ValueForLine(int line)
+    public short ValueForLine(int line)
     {
         return Type switch
         { 
@@ -40,46 +40,41 @@ public class ScrollTable
 
     public void Set(int index, short value)
     {
-        Values[index] = (ushort)(value.NMod((short)_limit));
+        Values[index] = (short)(value.NMod((short)_limit));
     }
 
-    public void SetAll(ushort value)
+    public void Add(int index, short value)
     {
-        for(int i = 0; i < Values.Length; i++)
-        {
-            Values[i] = value;
-            Values[i] = (ushort)(Values[i] % _limit);
-        }
+        index = index.NMod(Values.Length);
+        Values[index] = (short)(Values[index] + value).NMod(_limit);
     }
 
     public void SetAll(short value)
     {
-        for (int i = 0; i < Values.Length; i++)
+        for(int i = 0; i < Values.Length; i++)
         {
-            Values[i] = (ushort)(value.NMod((short)_limit));
+            Values[i] = value.NMod(_limit);
         }
     }
 
-    public void SetRange(int start, int count, ushort value)
+    public void SetRange(int start, int count, short value)
     {
         int index = start;
         while(count-- > 0)
         {
             if (index >= 0 && index < Values.Length)
             {
-                Values[index] = value;
-                Values[index] = (ushort)(Values[index] % _limit);
+                Values[index] = value.NMod(_limit);
             }
             index++;
         }
     }
 
-    public void AddAll(ushort value)
+    public void AddAll(short value)
     {
         for (int i = 0; i < Values.Length; i++)
         {
-            Values[i] += value;
-            Values[i] = (ushort)(Values[i] % _limit);
+            Values[i] = (short)(Values[i] + value).NMod(_limit);
         }
     }
 }
