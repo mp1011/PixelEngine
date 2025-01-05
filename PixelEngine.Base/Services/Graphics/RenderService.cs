@@ -22,8 +22,8 @@
         _pixelBuffer = new byte[specs.ScreenWidth * specs.ScreenHeight * Color.Bytes];
 
         Layers = new LayerGroup(
-            new ScrollingLayer(specs, 64, 32),
-            new ScrollingLayer(specs, 64, 32),
+            new ScrollingLayer(specs, 1, 1),
+            new ScrollingLayer(specs, 1, 1),
             new Layer(specs, 32, 32),
             new Layer(specs, 4, 4) 
             );
@@ -188,7 +188,7 @@
         sprites.Add(nextSprite);
 
         int count = 0;
-        while (nextSprite.Next != 0 && count < sprites.Count)
+        while (nextSprite.Next != 0 && count < Sprites.Length)
         {
             count++;
             if (nextSprite.Next < Sprites.Length)

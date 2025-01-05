@@ -31,17 +31,39 @@
         byte[] vsram = new byte[256];
         Array.Copy(fileData, Locations.VRam, vsram, 0, vsram.Length);
 
+        var registers = ReadRegisters(originalFileData, Locations.Registers);
+
+        renderService.Layers = new LayerGroup(
+        new ScrollingLayer(specs, LayerTiles(registers.PlaneWidth), LayerTiles(registers.PlaneHeight)),
+            new ScrollingLayer(specs, LayerTiles(registers.PlaneWidth), LayerTiles(registers.PlaneHeight)),
+                new Layer(specs, 32, 32),
+                new Layer(specs, 4, 4)); //todo, sprite layer should be different
+
+        ReadVram(renderService, 
+            vram,
+            Array.Empty<byte>(),
+            cram,            
+            registers, 
+            specs);
+
+        LoadVScroll(renderService.Layers, (byte)registers.VScrollMode, originalFileData, Locations.VSRam, specs);
+        GensVramImporter.LoadColors(cram, renderService, specs);
+    }
+
+    public static GensVDPRegisters ReadRegisters(byte[] data, int start)
+    {
         // register bytes are not swapped
-        BitStreamReader registerReader = new BitStreamReader(originalFileData);
+        BitStreamReader registerReader = new BitStreamReader(data);
+        registerReader.Seek(start);
 
         // register 2 - Plane A Location
-        registerReader.Seek(Locations.Registers + 2);
+        registerReader.Seek(start + 2);
         registerReader.ReadNextBits(3);
         var planeANameTableLocation = registerReader.ReadNextBits(3) * 0x2000; // is this 0x400?
         registerReader.ReadNextBits(2);
 
         // register 4 - Plane B Location
-        registerReader.Seek(Locations.Registers + 4);
+        registerReader.Seek(start + 4);
         var planeBNameTableLocation = registerReader.ReadNextBits(3) * 0x2000;
         registerReader.ReadNextBits(5);
 
@@ -49,13 +71,13 @@
         var spriteTableLocation = registerReader.ReadNextBits(7) * 0x200;
 
         // register 7 - Background color
-        registerReader.Seek(Locations.Registers + 7);
+        registerReader.Seek(start + 7);
         var color = registerReader.ReadNextBits(4);
         var line = registerReader.ReadNextBits(2);
         registerReader.ReadNextBits(2);
 
         // register 11 - Scroll Modes
-        registerReader.Seek(Locations.Registers + 11);
+        registerReader.Seek(start + 11);
         var horizontalScrollMode = registerReader.ReadNextBits(2);
         var verticalScrollMode = registerReader.ReadNextBits(1);
         registerReader.ReadNextBits(5);
@@ -65,63 +87,57 @@
         registerReader.ReadNextBits(7);
 
         // register 13 - Horizontal Scroll Data
-        var hScrollLocation = registerReader.ReadNextBits(5) * 0x400;
-        registerReader.ReadNextBits(3);
+        var hScrollLocation = registerReader.ReadNextBits(6) * 0x400;
+        registerReader.ReadNextBits(2);
 
         // register 16 - Plane Size
-        registerReader.Seek(Locations.Registers + 16);
+        registerReader.Seek(start + 16);
         var planeWidth = registerReader.ReadNextBits(2);
         registerReader.ReadNextBits(2);
         var planeHeight = registerReader.ReadNextBits(2);
         registerReader.ReadNextBits(2);
 
-        renderService.Layers = new LayerGroup(
-        new ScrollingLayer(specs, LayerTiles(planeWidth), LayerTiles(planeHeight)),
-            new ScrollingLayer(specs, LayerTiles(planeWidth), LayerTiles(planeHeight)),
-                new Layer(specs, 32, 32),
-                new Layer(specs, 4, 4)); //todo, sprite layer should be different
-
-        ReadVram(renderService, 
-            vram,
-            Array.Empty<byte>(),
-            cram,            
-            horizontalScrollMode, 
-            verticalScrollMode, 
-            hScrollLocation, 
-            planeANameTableLocation, 
-            planeBNameTableLocation, 
-            spriteTableLocation, 
-            specs);
-
-        LoadVScroll(renderService.Layers, verticalScrollMode, originalFileData, Locations.VSRam, specs);
-        GensVramImporter.LoadColors(cram, renderService, specs);
+        return new GensVDPRegisters(
+            HScrollMode: (HScrollMode)horizontalScrollMode,
+            VScrollMode: (VScrollMode)verticalScrollMode,
+            hScrollLocation,
+            planeANameTableLocation,
+            planeBNameTableLocation,
+            spriteTableLocation,
+            planeWidth,
+            planeHeight);
     }
 
     public static void ReadVram(RenderService renderService, 
         byte[] vram,
         byte[] vsram,
         byte[] cram,
-        byte horizontalScrollMode, 
-        byte verticalScrollMode, 
-        int hScrollLocation, 
-        int planeANameTableLocation,
-        int planeBNameTableLocation,
-        int spriteTableLocation,
+        GensVDPRegisters registers,
         Specs specs)
-    {
+    {      
+        if (registers.PlaneWidth != renderService.Layers.Foreground.TileSize.Width
+            || registers.PlaneHeight != renderService.Layers.Foreground.TileSize.Height)
+        {
+
+            renderService.Layers = new LayerGroup(
+    new ScrollingLayer(specs, LayerTiles(registers.PlaneWidth), LayerTiles(registers.PlaneHeight)),
+        new ScrollingLayer(specs, LayerTiles(registers.PlaneWidth), LayerTiles(registers.PlaneHeight)),
+            new Layer(specs, 32, 32),
+            new Layer(specs, 4, 4)); //todo, sprite layer should be different
+        }
 
         GensVramImporter.LoadColors(cram, renderService, specs);
 
         renderService.PatternTable.SetData(vram);
 
-        LoadHScroll(renderService.Layers, horizontalScrollMode, vram, hScrollLocation, specs);
+        LoadHScroll(renderService.Layers, (byte)registers.HScrollMode, vram, registers.HScrollLocation, specs);
 
         if(vsram.Length > 0)
-            LoadVScroll(renderService.Layers, verticalScrollMode, vsram, 0, specs);
+            LoadVScroll(renderService.Layers, (byte)registers.VScrollMode, vsram, 0, specs);
 
-        GensVramImporter.LoadLayer(vram, renderService.Layers.Foreground, planeANameTableLocation);
-        GensVramImporter.LoadLayer(vram, renderService.Layers.Background, planeBNameTableLocation);
-        GensVramImporter.LoadSprites(vram, spriteTableLocation, renderService.Sprites);
+        GensVramImporter.LoadLayer(vram, renderService.Layers.Foreground, registers.PlaneALocation);
+        GensVramImporter.LoadLayer(vram, renderService.Layers.Background, registers.PlaneBLocation);
+        GensVramImporter.LoadSprites(vram, registers.SpriteTableLocation, renderService.Sprites);
     }
     private static int LayerTiles(int planeSize) =>
         planeSize switch
@@ -219,7 +235,7 @@
 
     private static void LoadEightPixelStripVScrollData(LayerGroup layers, byte[] fileData, int location)
     {
-        for (int strip = 0; strip < layers.Background.HScrollTable.Values.Length; strip++)
+        for (int strip = 0; strip < layers.Background.VScrollTable.Values.Length; strip++)
         {
             ReadScrollEntry(layers, false, fileData, location, strip);
             location += 4;

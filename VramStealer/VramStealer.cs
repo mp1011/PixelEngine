@@ -21,9 +21,10 @@ public class VramStealer
     private int _vramAddress;
     private int _cramAddress;
     private int _vsramAddress;
+    private int _registersAddress;
 
 
-    public void Setup(int? knownVramAddress, int? knownCramAddress, int? knownVsramAddress)
+    public void Setup(int? knownVramAddress, int? knownCramAddress, int? knownVsramAddress, int? knownRegistersAddress)
     {
         _gensProcess = LaunchGens();
         _gensProcessHandle = OpenProcess(PROCESS_VM_READ, false, _gensProcess.Id);
@@ -36,6 +37,10 @@ public class VramStealer
 
         if (knownVsramAddress.HasValue)
             _vsramAddress = knownVsramAddress.Value;
+
+        if (knownRegistersAddress.HasValue)
+            _registersAddress = knownRegistersAddress.Value;
+
     }
 
     public void ScanForVram()
@@ -80,6 +85,25 @@ public class VramStealer
         return maybeAddress;
     }
 
+    public void ScanForRegisters()
+    {
+        Console.WriteLine("Pause gens, then save state to regtest.gs0");
+        Console.ReadKey();
+
+        var sampleData = File.ReadAllBytes($"D:\\GitHub\\PixelEngine\\PixelEngine.SampleGame\\Content\\GensSaveStates\\regtest.gs0");
+        sampleData = sampleData.Skip(0xFA).Take(20).ToArray();
+
+       
+        while (true)
+        {
+            _registersAddress = ScanMemory(_gensProcessHandle, _registersAddress+1, sampleData, 4);
+            Console.WriteLine($"Registers found, press y to accept");
+
+            if (Console.ReadKey().Key == ConsoleKey.Y)
+                break;
+        }
+    }
+
     public byte[] CurrentVram()
     {
         return ReadMemory(_gensProcessHandle, _vramAddress, 0x10000);
@@ -91,6 +115,14 @@ public class VramStealer
     public byte[] CurrentVsram()
     {
         return ReadMemory(_gensProcessHandle, _vsramAddress, 256);
+    }
+
+    public byte[] CurrentRegisters()
+    {
+        var result = ReadMemory(_gensProcessHandle, _registersAddress, 80);
+        return Enumerable.Range(0, 20)
+                         .Select(ix => result[ix * 4])
+                         .ToArray();
     }
 
     public void RecordSnapshots()
@@ -129,14 +161,21 @@ public class VramStealer
             return Array.Empty<byte>();
     }
 
-    int ScanMemory(IntPtr processHandle, int start, byte[] search)
+    int ScanMemory(IntPtr processHandle, int start, byte[] search, int mult=1)
     {
         for (int i = start; i < int.MaxValue; i++)
         {
             if ((i % 100000) == 0)
                 Console.Write('.');
 
-            var result = ReadMemory(processHandle, i, search.Length);
+            var result = ReadMemory(processHandle, i, search.Length * mult);
+
+            if(result.Length > 0 && mult > 1)
+            {
+                result = Enumerable.Range(0, search.Length)
+                    .Select(ix => result[ix * mult])
+                    .ToArray();
+            }
 
             if (result.Length == search.Length)
             {

@@ -18,29 +18,9 @@ public record GensVDPRegisters(
     int HScrollLocation,
     int PlaneALocation,
     int PlaneBLocation,
-    int SpriteTableLocation) 
+    int SpriteTableLocation,
+    int PlaneWidth,
+    int PlaneHeight)
 {
-    public static GensVDPRegisters KC => new GensVDPRegisters(
-        HScrollMode.Line,
-        VScrollMode.FullScreen,
-        0x1400,
-        0,
-        0xE000,
-        0x1000);
-
-    public static GensVDPRegisters Ecco => new GensVDPRegisters(
-       HScrollMode.FullScreen,
-       VScrollMode.FullScreen,
-       0xFC00,
-       0xC000,
-       0xE000,
-       0xF800);
-
-    public static GensVDPRegisters Sonic => new GensVDPRegisters(
-      HScrollMode.Line,
-      VScrollMode.FullScreen,
-      0xFC00,
-      0xC000,
-      0xE000,
-      0xF800);
+   
 }

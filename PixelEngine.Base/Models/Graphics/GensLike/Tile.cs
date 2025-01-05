@@ -70,4 +70,10 @@ public struct Tile
         Priority = priority;
         PaletteIndex = paletteIndex;
     }
+
+    public void CopyFrom(Tile other)
+    {
+        _high = other._high;
+        _low = other._low;
+    }
 }
