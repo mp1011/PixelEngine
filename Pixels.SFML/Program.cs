@@ -7,12 +7,8 @@ var inputManager = new SfmlInputManager(
 
 var coreRenderService = new RenderService(specs);
 
-//var engine = new StaticEngine("test.gs0", "kc.cram", coreRenderService, inputManager, specs);
-//var engine = new StaticEngine("headdy.gs0", "headdy.cram", coreRenderService, inputManager, specs);
-//var engine = new StaticEngine("sor.gs0", "sor.cram", coreRenderService, inputManager, specs);
-//var engine = new StaticEngine("sonic.gs0", "sonic.cram", coreRenderService, inputManager, specs);
-//var engine = new StaticEngine("ecco.gs0", "ecco.cram", coreRenderService, inputManager, specs);
-var engine = new KcMockup(coreRenderService, inputManager, specs);
+var engine = new StealerEngine(GensVDPRegisters.KC, MemoryLocations.Local, coreRenderService, inputManager, specs);
+//var engine = new KcMockup(coreRenderService, inputManager, specs);
 
 engine.Load();
 
@@ -26,6 +22,7 @@ while (windowManager.Window.IsOpen)
     inputManager.Update();
     engine.Update(frameNumber++); 
     windowManager.DispatchEvents();
-    renderService.DebugString = Debug.Text1;
+    renderService.DebugString1 = Debug.Text1;
+    renderService.DebugString2 = Debug.Text2;
     renderService.DisplayFrame();
 }

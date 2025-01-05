@@ -5,12 +5,19 @@
     private readonly SfmlWindowManager _windowManager;
     private RectangleShape _shape;
     private FrameRateDisplay _frameRateDisplay = new FrameRateDisplay();
-    private DebugString _debugString = new DebugString();
+    private DebugString _debugString1 = new DebugString(320);
+    private DebugString _debugString2 = new DebugString(340);
 
-    public string DebugString
+    public string DebugString1
     {
-        get => _debugString.Text;
-        set => _debugString.Text = value;
+        get => _debugString1.Text;
+        set => _debugString1.Text = value;
+    }
+
+    public string DebugString2
+    {
+        get => _debugString2.Text;
+        set => _debugString2.Text = value;
     }
 
     public SfmlRenderService(Specs specs, SfmlWindowManager windowManager, RenderService renderService)
@@ -31,7 +38,9 @@
         window.Clear();
         window.Draw(_shape);
         _frameRateDisplay.Draw(window);
-        _debugString.Draw(window);
+        _debugString1.Draw(window);
+        _debugString2.Draw(window);
+
         window.Display();
     }
 }

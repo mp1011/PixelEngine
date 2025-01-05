@@ -54,7 +54,7 @@
     {
         int pixelsPerTile = _specs.TileSize * _specs.TileSize;
         int bufferIndex = 0;
-        int tileX = 0, tileY = 0, pixelX = 0, pixelY = 0, pixelIndex = 0, srcX = 0, srcY = 0, tileStart = 0;
+        int tileX = 0, tileY = 0, srcX = 0, srcY = 0, tileStart = 0;
         byte colorValue = 0;
         Tile tile = new();
 
@@ -84,8 +84,8 @@
             drewFgPixel = false;
             // these two blocks are near copies
             #region FG
-            srcX = (x + fgScrollX) % fgPixelsWidth;
-            srcY = (y + fgScrollY) % fgPixelsHeight;
+            srcX = (x - fgScrollX).NMod(fgPixelsWidth);
+            srcY = (y + fgScrollY).NMod(fgPixelsHeight);
 
             tile = fg.Tiles[srcX / tileSize, srcY / tileSize];
             if (tile.Index != 0)
@@ -118,8 +118,8 @@
             #region BG
             if (!drewFgPixel)
             {
-                srcX = (x + bgScrollX) % bgPixelsWidth;
-                srcY = (y + bgScrollY) % bgPixelsHeight;
+                srcX = (x - bgScrollX).NMod(bgPixelsWidth);
+                srcY = (y + bgScrollY).NMod(bgPixelsHeight);
 
                 tile = bg.Tiles[srcX / tileSize, srcY / tileSize];
                 if (tile.Index != 0)
@@ -187,10 +187,15 @@
         var nextSprite = Sprites[0];
         sprites.Add(nextSprite);
 
-        while (nextSprite.Next != 0)
+        int count = 0;
+        while (nextSprite.Next != 0 && count < sprites.Count)
         {
-            nextSprite = Sprites[nextSprite.Next];
-            sprites.Add(nextSprite);
+            count++;
+            if (nextSprite.Next < Sprites.Length)
+            {
+                nextSprite = Sprites[nextSprite.Next];
+                sprites.Add(nextSprite);
+            }
         }
 
         sprites.Reverse();
@@ -282,10 +287,10 @@
         var fgScrollV = Layers.Foreground.VScrollTable.ValueForLine(screenX);
         var fgScrollH = Layers.Foreground.HScrollTable.ValueForLine(screenY);
 
-        var bgX = (screenX + bgScrollH) % (Layers.Background.PixelSize.Width);
-        var bgY = (screenY + bgScrollV) % (Layers.Background.PixelSize.Height);
-        var fgX = (screenX + fgScrollH) % (Layers.Foreground.PixelSize.Width);
-        var fgY = (screenY + fgScrollV) % (Layers.Foreground.PixelSize.Height);
+        var bgX = (screenX - bgScrollH).NMod(Layers.Background.PixelSize.Width);
+        var bgY = (screenY + bgScrollV).NMod(Layers.Background.PixelSize.Height);
+        var fgX = (screenX - fgScrollH).NMod(Layers.Foreground.PixelSize.Width);
+        var fgY = (screenY + fgScrollV).NMod(Layers.Foreground.PixelSize.Height);
 
         var bgTile = Layers.Background.Tiles[bgX/ _specs.TileSize, bgY / _specs.TileSize];
         var fgTile = Layers.Foreground.Tiles[fgX / _specs.TileSize, fgY / _specs.TileSize];

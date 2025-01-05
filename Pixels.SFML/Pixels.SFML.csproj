@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PixelEngine.Base\PixelEngine.Base.csproj" />
     <ProjectReference Include="..\PixelEngine.SampleGame\PixelEngine.SampleGame.csproj" />
+    <ProjectReference Include="..\VramStealer\VramStealer.csproj" />
   </ItemGroup>
 
 </Project>
