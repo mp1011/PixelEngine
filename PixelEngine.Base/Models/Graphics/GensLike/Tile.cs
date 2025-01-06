@@ -71,9 +71,18 @@ public struct Tile
         PaletteIndex = paletteIndex;
     }
 
-    public void CopyFrom(Tile other)
+    public override string ToString()
     {
-        _high = other._high;
-        _low = other._low;
+        var p = Priority ? " Priority" : "";
+        var h = FlipH ? " FlipH" : "";
+        var v = FlipV ? " FlipH" : "";
+
+        return $"{Index} {PaletteIndex}{p}{h}{v}";
+    }
+
+    public void WriteBytes(byte[] buffer, int index)
+    {
+        buffer[index] = _high;
+        buffer[index + 1] = _low;
     }
 }

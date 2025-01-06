@@ -5,7 +5,7 @@
     private byte[] _pixelBuffer;
     private int _hInterruptLinesRemaining;
 
-    public LayerGroup Layers { get; set; }
+    public LayerGroup Layers { get; }
 
     public byte HInterruptCounter { get; set; }
    

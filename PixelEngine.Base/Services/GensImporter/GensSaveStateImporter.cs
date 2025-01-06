@@ -33,11 +33,8 @@
 
         var registers = ReadRegisters(originalFileData, Locations.Registers);
 
-        renderService.Layers = new LayerGroup(
-        new ScrollingLayer(specs, LayerTiles(registers.PlaneWidth), LayerTiles(registers.PlaneHeight)),
-            new ScrollingLayer(specs, LayerTiles(registers.PlaneWidth), LayerTiles(registers.PlaneHeight)),
-                new Layer(specs, 32, 32),
-                new Layer(specs, 4, 4)); //todo, sprite layer should be different
+        renderService.Layers.Background.Resize(new Size(LayerTiles(registers.PlaneWidth), LayerTiles(registers.PlaneHeight)));
+        renderService.Layers.Foreground.Resize(new Size(LayerTiles(registers.PlaneWidth), LayerTiles(registers.PlaneHeight)));
 
         ReadVram(renderService, 
             vram,
@@ -119,11 +116,8 @@
             || registers.PlaneHeight != renderService.Layers.Foreground.TileSize.Height)
         {
 
-            renderService.Layers = new LayerGroup(
-    new ScrollingLayer(specs, LayerTiles(registers.PlaneWidth), LayerTiles(registers.PlaneHeight)),
-        new ScrollingLayer(specs, LayerTiles(registers.PlaneWidth), LayerTiles(registers.PlaneHeight)),
-            new Layer(specs, 32, 32),
-            new Layer(specs, 4, 4)); //todo, sprite layer should be different
+            renderService.Layers.Foreground.Resize(new Size(LayerTiles(registers.PlaneWidth), LayerTiles(registers.PlaneHeight)));
+            renderService.Layers.Background.Resize(new Size(LayerTiles(registers.PlaneWidth), LayerTiles(registers.PlaneHeight)));
         }
 
         GensVramImporter.LoadColors(cram, renderService, specs);
