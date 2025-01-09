@@ -8,7 +8,19 @@
 
 public struct Tile
 {
-    private byte _low, _high;
+    private ArraySegment<byte> _data = new ArraySegment<byte>(new byte[2]);
+
+    private byte _low
+    {
+        get =>_data[0];
+        set => _data[0] = value;
+    }
+
+    private byte _high
+    {
+        get => _data[1];
+        set => _data[1] = value;
+    }
 
     public short Index
     {
@@ -56,14 +68,14 @@ public struct Tile
         }
     }
 
-    public Tile(byte high, byte low)
+    public Tile(byte[] vram, int address)
     {
-        _high = high;
-        _low = low;
+        _data = new ArraySegment<byte>(vram, address, 2);
     }
 
     public Tile(short index, bool priority, bool flipH, bool flipV, PaletteIndex paletteIndex) : this()
     {
+        _data = new ArraySegment<byte>(new byte[2]);
         Index = index;
         FlipH = flipH;
         FlipV = flipV;

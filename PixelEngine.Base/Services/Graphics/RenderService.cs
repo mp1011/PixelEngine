@@ -1,5 +1,8 @@
 ﻿public class RenderService
 {
+    private bool _ready = false;
+    private byte[] _vram;
+
     private readonly Specs _specs;
     private readonly Palette[] _palettes;
     private byte[] _pixelBuffer;
@@ -37,8 +40,32 @@
                              .ToArray();
     }
 
+    public void SetAllData(GensVDPRegisters registers, byte[] vram, byte[] cram, byte[] vsRam)
+    {
+        if (registers.PlaneALocation == 0 && registers.PlaneBLocation == 0)
+            return;
+
+
+        _vram = _vram ?? new byte[vram.Length];
+
+        Array.Copy(vram, _vram, vram.Length);
+        PatternTable.SetData(_vram);
+        Layers.Background.SetData(_vram, registers.PlaneBLocation);
+        Layers.Foreground.SetData(_vram, registers.PlaneALocation);
+
+        for (int index = 0; index < Sprites.Length; index++)
+        {
+            Sprites[index].UpdateMemory(vram, registers.SpriteTableLocation + (index * Sprite.Size));
+        }
+
+        _ready = true;
+    }
+
     public byte[] CalculateFramePixels()
     {
+        if (!_ready)
+            return Array.Empty<byte>();
+
         Array.Clear(_pixelBuffer,0, _pixelBuffer.Length);
         _hInterruptLinesRemaining = HInterruptCounter;
 

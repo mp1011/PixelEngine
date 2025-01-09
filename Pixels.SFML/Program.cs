@@ -1,4 +1,6 @@
-﻿var specs = Specs.GensLike;
+﻿
+
+var specs = Specs.GensLike;
 
 var inputManager = new SfmlInputManager(
     new PlayerInput(),

@@ -1,23 +1,66 @@
 ﻿public class Sprite
 {
-    private byte _vpLow, _vpHigh, _next, _size, _gfxLow, _gfxHighAndFlags, _hpLow, _hpHigh;
+    public const int Size = 8;
+
+    private ArraySegment<byte> _data;
+
+    private byte _vpLow
+    {
+        get => _data[0];
+        set => _data[0] = value;
+    }
+
+    public byte _vpHigh
+    {
+        get => _data[1];
+        set => _data[1] = value;
+    }
+
+    public byte _next
+    {
+        get => _data[2];
+        set => _data[2] = value;
+    }
+
+    public byte _size
+    {
+        get => _data[3];
+        set => _data[3] = value;
+    }
+
+    public byte _gfxLow
+    {
+        get => _data[4];
+        set => _data[4] = value;
+    }
+
+    public byte _gfxHighAndFlags
+    {
+        get => _data[5];
+        set => _data[5] = value;
+    }
+
+    private byte _hpLow
+    {
+        get => _data[6];
+        set => _data[6] = value;
+    }
+
+    public byte _hpHigh
+    {
+        get => _data[7];
+        set => _data[7] = value;
+    }
 
 
     public Sprite()
     {
-
+        _data = new ArraySegment<byte>(new byte[Sprite.Size]);
     }
 
-    public Sprite(byte[] data, int index)
+    public void UpdateMemory(byte[] vram, int address)
     {
-        _vpLow = data[index];
-        _vpHigh = data[index + 1];
-        _next = data[index + 2];
-        _size = data[index + 3];
-        _gfxLow = data[index + 4];
-        _gfxHighAndFlags = data[index + 5];
-        _hpLow = data[index + 6];
-        _hpHigh = data[index + 7];
+        _data = new ArraySegment<byte>(vram, address, Sprite.Size);
     }
 
     public int VerticalPos

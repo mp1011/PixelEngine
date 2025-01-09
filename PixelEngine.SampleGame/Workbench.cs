@@ -11,10 +11,10 @@
     public static void LoadKcScene(LayerGroup layers, RenderService coreRenderService, Specs specs)
     {
         coreRenderService.PatternTable.SetData(DiskResourceLoader.Load("SampleVRAM\\kc.ram"));
-        GensVramImporter.LoadLayer(DiskResourceLoader.Load("SampleVRAM\\kc.ram"), layers.Background, 0xE000);
-        GensVramImporter.LoadLayer(DiskResourceLoader.Load("SampleVRAM\\kc.ram"), layers.Foreground, 0);
+      //  GensVramImporter.LoadLayer(DiskResourceLoader.Load("SampleVRAM\\kc.ram"), layers.Background, 0xE000);
+     //   GensVramImporter.LoadLayer(DiskResourceLoader.Load("SampleVRAM\\kc.ram"), layers.Foreground, 0);
         GensVramImporter.LoadColors(DiskResourceLoader.Load("SampleVRAM\\kc.cram"), coreRenderService, specs);
-        GensVramImporter.LoadSprites(DiskResourceLoader.Load("SampleVRAM\\kc.ram"), 0x1000, coreRenderService.Sprites);
+      //  GensVramImporter.LoadSprites(DiskResourceLoader.Load("SampleVRAM\\kc.ram"), 0x1000, coreRenderService.Sprites);
 
         layers.Foreground.HScrollTable = new ScrollTable(ScrollTableType.Line, true, layers.Foreground.PixelSize.Width, specs);
         layers.Foreground.VScrollTable = new ScrollTable(ScrollTableType.FullScreen, false, layers.Foreground.PixelSize.Height, specs);

@@ -129,9 +129,9 @@
         if(vsram.Length > 0)
             LoadVScroll(renderService.Layers, (byte)registers.VScrollMode, vsram, 0, specs);
 
-        GensVramImporter.LoadLayer(vram, renderService.Layers.Foreground, registers.PlaneALocation);
-        GensVramImporter.LoadLayer(vram, renderService.Layers.Background, registers.PlaneBLocation);
-        GensVramImporter.LoadSprites(vram, registers.SpriteTableLocation, renderService.Sprites);
+       // GensVramImporter.LoadLayer(vram, renderService.Layers.Foreground, registers.PlaneALocation);
+        //GensVramImporter.LoadLayer(vram, renderService.Layers.Background, registers.PlaneBLocation);
+       // GensVramImporter.LoadSprites(vram, registers.SpriteTableLocation, renderService.Sprites);
     }
     private static int LayerTiles(int planeSize) =>
         planeSize switch

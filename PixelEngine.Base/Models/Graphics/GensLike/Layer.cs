@@ -1,4 +1,6 @@
-﻿public class Layer
+﻿using System.Reflection.Emit;
+
+public class Layer
 {
     protected readonly Specs _specs;
 
@@ -17,6 +19,15 @@
     public void Resize(Size tiles)
     {
         Tiles = new ArrayDataGrid<Tile>(tiles.Width, tiles.Height);
+    }
+
+    public void SetData(byte[] vram, int address)
+    {
+        for (int i = 0; i < Tiles.Length; i++)
+        {
+            Tiles[i] = new Tile(vram, address);
+            address += 2;
+        }
     }
 }
 

@@ -1,23 +1,5 @@
 ﻿public class GensVramImporter
 {
-    public static void LoadLayer(byte[] vramData, Layer layer, int vramIndex)
-    {
-        for (int i = 0; i < layer.Tiles.Length; i++)
-        {
-            layer.Tiles[i] = new Tile(vramData[vramIndex + 1], vramData[vramIndex]);
-            vramIndex += 2;
-        }
-    }
-
-    public static void LoadSprites(byte[] vramData, int vramIndex, Sprite[] destination)
-    {
-        for (int i = 0; i < destination.Length; i++)
-        {
-            destination[i] = new Sprite(vramData, vramIndex);
-            vramIndex += 8;
-        }
-    }
-
     public static void LoadColors(byte[] data, RenderService renderService, Specs specs)
     {
         var bitReader = new BitStreamReader(data);

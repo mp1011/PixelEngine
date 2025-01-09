@@ -1,7 +1,13 @@
 ﻿public record MemoryLocations(int? VRAM, int? CRAM, int? VSRAM, int? Registers)
 {
-    // 25596298;
-    public static MemoryLocations Local => new MemoryLocations(23240128, 23305664, 23305952, 23307232);
+    //v 33004992
+    //c 33070528
+    //vs 33070816
+    //reg 33072096
+
+
+    //  public static MemoryLocations Local => new MemoryLocations(23240128, 23305664, 23305952, 23307232);
+    public static MemoryLocations Local => new MemoryLocations(33004992, 33070528, 33070816, Registers: 33072096);
 }
 
 public enum StealerMode
@@ -67,6 +73,8 @@ public class StealerEngine : Engine
             _stealer.CurrentCram(),
             registers,
             _specs);
+
+        _renderService.SetAllData(registers, vram, _stealer.CurrentCram(), _stealer.CurrentVsram());
 
         switch(_mode)
         {
