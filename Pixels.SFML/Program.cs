@@ -9,7 +9,9 @@ var inputManager = new SfmlInputManager(
 
 var coreRenderService = new RenderService(specs);
 
-var engine = new StealerEngine(StealerMode.PlaneExtractor, MemoryLocations.Local, coreRenderService, inputManager, specs);
+//var engine = new StealerEngine(StealerMode.PlaneExtractor, MemoryLocations.Local, coreRenderService, inputManager, specs);
+var engine = new StreamScrollerTester("kc.ram", "map.bin", coreRenderService, inputManager, specs);
+
 //var engine = new KcMockup(coreRenderService, inputManager, specs);
 
 engine.Load();

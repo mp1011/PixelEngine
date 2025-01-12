@@ -34,8 +34,8 @@
         _clockString.Text = "1:23";
 
         _camera = new Camera();
-
-        _coordinateTranslator = new CoordinateTranslator(_renderService.Layers.Foreground, _camera);
+        //todo - create map
+        _coordinateTranslator = new CoordinateTranslator(_renderService.Layers.Foreground, null, _camera, _specs);
         var collisionMap = Workbench.CreateCollisionMap();
         var collisionManager = new CollisionManager(collisionMap, _coordinateTranslator, _specs);
 
@@ -57,7 +57,7 @@
             new BackgroundScrollLayer(1, 0.5),
         };
 
-        _streamScroller = new StreamScroller(_renderService.Layers.Background, _renderService.Layers.Foreground, player,
+        _streamScroller = new StreamScroller(_renderService.Layers.Background, _renderService.Layers.Foreground, null, player,
             _coordinateTranslator, _camera, bgHScrollLayers, bgVScrollLayers, _specs);
     }
 

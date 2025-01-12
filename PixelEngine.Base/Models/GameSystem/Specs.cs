@@ -7,6 +7,8 @@
     int NumPalettes,
     int NumSprites)
 {
+    public Size ScreenSize = new Size( ScreenWidth, ScreenHeight);
+
     public static Specs GensLike => new Specs(
         ScreenWidth: 320, 
         ScreenHeight: 224,

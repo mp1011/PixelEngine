@@ -1,13 +1,15 @@
 ﻿public record MemoryLocations(int? VRAM, int? CRAM, int? VSRAM, int? Registers)
 {
-    //v 33004992
-    //c 33070528
-    //vs 33070816
-    //reg 33072096
-
+    //29728192
+    //14458776
+    //29794016
 
     //  public static MemoryLocations Local => new MemoryLocations(23240128, 23305664, 23305952, 23307232);
-    public static MemoryLocations Local => new MemoryLocations(33004992, 33070528, 33070816, Registers: 33072096);
+    //  public static MemoryLocations Local => new MemoryLocations(33004992, 33070528, 33070816, Registers: 33072096);
+    public static MemoryLocations Local => new MemoryLocations(29728192, 14458776, 29794016, Registers: 29795296);
+
+   // public static MemoryLocations Local => new MemoryLocations(null, null, null, null);
+
 }
 
 public enum StealerMode
@@ -66,37 +68,34 @@ public class StealerEngine : Engine
             return;
 
         var registers = GensSaveStateImporter.ReadRegisters(_stealer.CurrentRegisters(), 0);
-        GensSaveStateImporter.ReadVram(
-            _renderService,
-            vram,
-            _stealer.CurrentVsram(),
-            _stealer.CurrentCram(),
-            registers,
-            _specs);
-
         _renderService.SetAllData(registers, vram, _stealer.CurrentCram(), _stealer.CurrentVsram());
 
+     
         switch(_mode)
         {
-            case StealerMode.Mirror:
-                var fh = _renderService.Layers.Foreground.HScrollTable.Values[0];
-                var fv = _renderService.Layers.Foreground.VScrollTable.Values[0];
-                var bh = _renderService.Layers.Background.HScrollTable.Values[0];
-                var bv = _renderService.Layers.Background.VScrollTable.Values[0];
+            case StealerMode.Mirror:                
+                Debug.Text1 = $"A=Save State";
+                if(_inputManager.Player1.KeyPressed(GamepadButtons.A))
+                {
+                    SaveRenderState();
+                }
 
-                var b0 = vram[0x1400];
-                var b1 = (vram[0x1400 + 1] & 3);
-                var b2 = vram[0x1400 + 2];
-                var b3 = (vram[0x1400 + 3] & 3);
-
-                Debug.Text1 = $"FG={fh},{fv}  BG={bh},{bv}";
-                Debug.Text2 = $"{b0} | {b1} | {b2} | {b3}";
                 break;
             case StealerMode.PlaneExtractor:
                 _planeStealer.Update();
                 break;
         }
+    }
 
+    private void SaveRenderState()
+    {
+        List<byte> all = new List<byte>();
+        all.AddRange(_stealer.CurrentRegisters());
+        all.AddRange(_stealer.CurrentVram());
+        all.AddRange(_stealer.CurrentCram());
+        all.AddRange(_stealer.CurrentVsram());
+
+        File.WriteAllBytes("renderstate.ram", all.ToArray());
     }
 }
 

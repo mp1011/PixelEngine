@@ -16,4 +16,13 @@
     {
         return new Point(p1.X / value, p1.Y / value);
     }
+
+    public static Point operator *(Point p1, int value)
+    {
+        return new Point(p1.X * value, p1.Y * value);
+    }
+
+    public override string ToString() => $"{X},{Y}";
+    public Point NMod(Size size) => new Point(X.NMod(size.Width), Y.NMod(size.Height));
+    public Point Abs() => new Point(Math.Abs(X), Math.Abs(Y)); 
 }

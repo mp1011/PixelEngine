@@ -36,12 +36,7 @@
         renderService.Layers.Background.Resize(new Size(LayerTiles(registers.PlaneWidth), LayerTiles(registers.PlaneHeight)));
         renderService.Layers.Foreground.Resize(new Size(LayerTiles(registers.PlaneWidth), LayerTiles(registers.PlaneHeight)));
 
-        ReadVram(renderService, 
-            vram,
-            Array.Empty<byte>(),
-            cram,            
-            registers, 
-            specs);
+        // set data here....
 
         LoadVScroll(renderService.Layers, (byte)registers.VScrollMode, originalFileData, Locations.VSRam, specs);
         GensVramImporter.LoadColors(cram, renderService, specs);
@@ -105,35 +100,7 @@
             planeHeight);
     }
 
-    public static void ReadVram(RenderService renderService, 
-        byte[] vram,
-        byte[] vsram,
-        byte[] cram,
-        GensVDPRegisters registers,
-        Specs specs)
-    {      
-        if (registers.PlaneWidth != renderService.Layers.Foreground.TileSize.Width
-            || registers.PlaneHeight != renderService.Layers.Foreground.TileSize.Height)
-        {
-
-            renderService.Layers.Foreground.Resize(new Size(LayerTiles(registers.PlaneWidth), LayerTiles(registers.PlaneHeight)));
-            renderService.Layers.Background.Resize(new Size(LayerTiles(registers.PlaneWidth), LayerTiles(registers.PlaneHeight)));
-        }
-
-        GensVramImporter.LoadColors(cram, renderService, specs);
-
-        renderService.PatternTable.SetData(vram);
-
-        LoadHScroll(renderService.Layers, (byte)registers.HScrollMode, vram, registers.HScrollLocation, specs);
-
-        if(vsram.Length > 0)
-            LoadVScroll(renderService.Layers, (byte)registers.VScrollMode, vsram, 0, specs);
-
-       // GensVramImporter.LoadLayer(vram, renderService.Layers.Foreground, registers.PlaneALocation);
-        //GensVramImporter.LoadLayer(vram, renderService.Layers.Background, registers.PlaneBLocation);
-       // GensVramImporter.LoadSprites(vram, registers.SpriteTableLocation, renderService.Sprites);
-    }
-    private static int LayerTiles(int planeSize) =>
+    public static int LayerTiles(int planeSize) =>
         planeSize switch
         {
             0 => 32,
@@ -143,7 +110,7 @@
         };
 
 
-    private static void LoadHScroll(LayerGroup layers, byte mode, byte[] fileData, int location, Specs specs)
+    public static void LoadHScroll(LayerGroup layers, byte mode, byte[] fileData, int location, Specs specs)
     {
         var scrollType = mode switch
         {
@@ -171,7 +138,7 @@
         }
     }
 
-    private static void LoadVScroll(LayerGroup layers, byte mode, byte[] fileData, int location, Specs specs)
+    public static void LoadVScroll(LayerGroup layers, byte mode, byte[] fileData, int location, Specs specs)
     {
         var scrollType = mode switch
         {

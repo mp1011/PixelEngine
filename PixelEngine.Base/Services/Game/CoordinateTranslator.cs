@@ -5,16 +5,38 @@
 /// </summary>
 public class CoordinateTranslator
 {
+    private readonly Specs _specs;
     private readonly ScrollingLayer _layer;
+    private readonly LevelTileMap _levelMap;
     private readonly Camera _camera;
 
     public Point ScrollSeamCorner { get; set; } = new Point(0,0);
 
 
-    public CoordinateTranslator(ScrollingLayer layer, Camera camera)
+    public CoordinateTranslator(ScrollingLayer layer, LevelTileMap levelTileMap, Camera camera, Specs specs)
     {
+        _specs = specs;
         _camera = camera;
         _layer = layer;
+        _levelMap = levelTileMap;
+    }
+
+    public Point ScreenToPlane(int x, int y) => ScreenToPlane(new Point(x,y));
+
+    public Point ScreenToPlane(Point screenPoint) => screenPoint
+        .Add(-_layer.HScrollTable.Values[0], _layer.VScrollTable.Values[0])
+        .NMod(_layer.PixelSize);
+
+    public Point PlaneToScreen(Point screenPoint) => screenPoint
+        .Add(_layer.HScrollTable.Values[0], -_layer.VScrollTable.Values[0])
+        .NMod(_layer.PixelSize);
+       // .NMod(_specs.ScreenSize);
+
+
+    public Point PlaneToWorld(Point planePoint)
+    {
+        var screenPoint = PlaneToScreen(planePoint);
+        return ScreenToWorld(screenPoint);
     }
 
     public Point SpriteToScreen(Sprite sprite) => SpriteToScreen(new Point(sprite.HorizontalPos, sprite.VerticalPos));
@@ -35,6 +57,6 @@ public class CoordinateTranslator
     
     public Point WorldToSprite(int worldX, int worldY) =>  WorldToSprite(new Point(worldX, worldY));
     public Point WorldToSprite(double worldX, double worldY) => WorldToSprite(new Point((int)worldX, (int)worldY));
-
+    public Point ScreenToWorld(Point screenPosition) => (_camera.WorldLocation + screenPosition).NMod(_levelMap.PixelSize);
 }
 

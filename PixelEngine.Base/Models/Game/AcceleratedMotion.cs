@@ -20,4 +20,10 @@
                 Speed = Target;
         }
     }
+
+    public void SetSpeedImmediate(int value)
+    {
+        Speed = value;
+        Target = value;
+    }
 }

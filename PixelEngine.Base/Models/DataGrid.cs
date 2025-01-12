@@ -80,15 +80,21 @@
         });
     }
 
-    public void CopyFrom(DataGrid<T> source, Rectangle sourceRegion, Point destination)
+    public void CopyFrom(DataGrid<T> source, Rectangle sourceRegion, Point destination, Action<int,int,T>? setValue = null)
     {
         source.ForEach((x, y) =>
         {
             var srcPt = new Point(x, y);
             if (sourceRegion.Contains(srcPt))
             {
-                this[destination.X + (x - sourceRegion.X),
-                    destination.Y + (y - sourceRegion.Y)] = source[x, y];
+                var destX = destination.X + (x - sourceRegion.X);
+                var destY = destination.Y + (y - sourceRegion.Y);
+
+                var copy = source[x, y];
+                if (setValue != null)
+                    setValue(destX, destY, copy);
+                else 
+                    this[destX,destY] = copy;
             }
         });
     }

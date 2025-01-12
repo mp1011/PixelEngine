@@ -8,7 +8,7 @@
 
 public struct Tile
 {
-    private ArraySegment<byte> _data = new ArraySegment<byte>(new byte[2]);
+    private ArraySegment<byte> _data;
 
     private byte _low
     {
@@ -83,18 +83,28 @@ public struct Tile
         PaletteIndex = paletteIndex;
     }
 
+    public Tile CopyFrom(Tile other)
+    {
+        _low = other._low;
+        _high = other._high;
+        return this;
+    }
+
     public override string ToString()
     {
+        if (_data.Array == null)
+            return "Invalid!!!";
+
         var p = Priority ? " Priority" : "";
         var h = FlipH ? " FlipH" : "";
-        var v = FlipV ? " FlipH" : "";
+        var v = FlipV ? " FlipV" : "";
 
         return $"{Index} {PaletteIndex}{p}{h}{v}";
     }
 
     public void WriteBytes(byte[] buffer, int index)
     {
-        buffer[index] = _high;
-        buffer[index + 1] = _low;
+        buffer[index] = _low;
+        buffer[index + 1] = _high;
     }
 }

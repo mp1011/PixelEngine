@@ -1,4 +1,5 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using System.ComponentModel;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 
 class PlaneStealer
@@ -9,7 +10,7 @@ class PlaneStealer
     private CoordinateTranslator _coordinateTranslator;
     private Camera _camera;
     private int _planeX = 0, _planeY = 0;
-    private ArrayDataGrid<Tile> _worldMap;
+    private LevelTileMap _worldMap;
     private bool _copyEnabled = false;
         
     public PlaneStealer(ScrollingLayer layer, InputManager inputManager, Specs specs)
@@ -18,8 +19,9 @@ class PlaneStealer
         _layer = layer;
         _inputManager = inputManager;
         _camera = new Camera();
-        _coordinateTranslator = new CoordinateTranslator(_layer, _camera);
-        _worldMap = new ArrayDataGrid<Tile>(1000, 1000);
+        _worldMap = new LevelTileMap(new Size(1000, 1000), _specs);
+        _coordinateTranslator = new CoordinateTranslator(_layer, _worldMap, _camera, _specs);
+
     }
 
     public void Update()
@@ -33,9 +35,8 @@ class PlaneStealer
         var worldTilePoint = _camera.WorldLocation / _specs.TileSize;
 
         var copyOnOff = _copyEnabled ? "ON" : "OFF";
-        Debug.Text1 = $"Camera = {_camera.WorldLocation.X},{_camera.WorldLocation.Y} (Tile {worldTilePoint.X},{worldTilePoint.Y})";
+        Debug.Text1 = $"Camera={_camera.WorldLocation.X},{_camera.WorldLocation.Y} WT={worldTilePoint} PT={planeTilePoint})";
         Debug.Text2 = $"Copy {copyOnOff}";
-
 
         if (_inputManager.Player1.KeyPressed(GamepadButtons.Right))
             _planeX++;
@@ -62,24 +63,35 @@ class PlaneStealer
         int maxX = 0;
         int maxY = 0;
 
-        _worldMap.ForEach((x, y) =>
+        _worldMap.Tiles.ForEach((x, y) =>
         {
-            if (x > maxX && _worldMap[x, y].Index > 0)
+            if (x > maxX && _worldMap.Tiles[x, y].Index > 0)
                 maxX = x;
-            if (y > maxY && _worldMap[x, y].Index > 0)
+            if (y > maxY && _worldMap.Tiles[x, y].Index > 0)
                 maxY = y;
         });
 
-        var trimmedMap = new ArrayDataGrid<Tile>(maxX + 1, maxY + 1);
-        trimmedMap.CopyFrom(_worldMap, new Rectangle(0, 0, trimmedMap.Width-1, trimmedMap.Height-1), new Point(0, 0));
+        var trimmedMap = new LevelTileMap(new Size(maxX + 1, maxY + 1), _specs);
+        trimmedMap.Tiles.CopyFrom(
+            _worldMap.Tiles, 
+            new Rectangle(0, 0, trimmedMap.Tiles.Width-1, trimmedMap.Tiles.Height-1), 
+            new Point(0, 0),
+            trimmedMap.SetFromOtherMap);
 
-        byte[] buffer = new byte[trimmedMap.Length * 2];
-        int index = 0;
-        foreach(var tile in trimmedMap.ToArray())
+        byte[] buffer = new byte[4 + trimmedMap.Tiles.Length * 2];
+
+        buffer[0] = (byte)((trimmedMap.Tiles.Width & 0xFF00) >> 8);
+        buffer[1] = (byte)(trimmedMap.Tiles.Width & 255);
+        buffer[2] = (byte)((trimmedMap.Tiles.Height & 0xFF00) >> 8);
+        buffer[3] = (byte)(trimmedMap.Tiles.Height & 255);
+
+        int index = 4;
+        foreach(var tile in trimmedMap.Tiles.ToArray())
         {
             tile.WriteBytes(buffer, index);
             index += 2;
         }
+
         File.WriteAllBytes("map.bin", buffer);
     }
 
@@ -96,20 +108,17 @@ class PlaneStealer
 
     private void CopyScreenTiles(Point planeCorner, Point worldCorner)
     {
-        _worldMap.ForEach(worldCorner, worldCorner.Add(_layer.TileSize.Width, _layer.TileSize.Height),
+        _worldMap.Tiles.ForEach(worldCorner, worldCorner.Add(_specs.ScreenWidth / _specs.TileSize, _specs.ScreenHeight / _specs.TileSize),
             (x, y) =>
             {
-                if (!InCaptureRange(x, y))
-                    return;
-
                 var relX = x - worldCorner.X;
                 var relY = y - worldCorner.Y;
 
-                var worldTile = _worldMap[x, y];
+                var worldTile = _worldMap.Tiles[x, y];
                 var planeTile = _layer.Tiles[(planeCorner.X + relX) % _layer.TileSize.Width, (planeCorner.Y + relY) % _layer.TileSize.Height];
 
                 if (worldTile.Index == 0)
-                    _worldMap[x,y] = planeTile;
+                    _worldMap.SetFromOtherMap(x,y,planeTile);
             });
     }
 }

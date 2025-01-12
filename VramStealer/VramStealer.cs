@@ -62,7 +62,7 @@ public class VramStealer
 
         sampleData = sampleData.Skip(0x192).Take(0x50).ToArray();
         var maybeAddress = ScanMemory(_gensProcessHandle, 0, sampleData.Take(10).ToArray());
-        maybeAddress = ScanMemory(_gensProcessHandle, _vramAddress, sampleData.Take(100).ToArray());
+        maybeAddress = ScanMemory(_gensProcessHandle, maybeAddress, sampleData.Take(100).ToArray());
 
         Console.WriteLine($"VSRam found, press any key");
         Console.ReadKey();
@@ -78,7 +78,7 @@ public class VramStealer
         var sampleData= File.ReadAllBytes($"D:\\Games\\Emulation\\Genesis\\{name}.ram");
 
         var maybeAddress = ScanMemory(_gensProcessHandle, 0, sampleData.Take(10).ToArray());
-        maybeAddress = ScanMemory(_gensProcessHandle, _vramAddress, sampleData.Take(100).ToArray());
+        maybeAddress = ScanMemory(_gensProcessHandle, maybeAddress, sampleData.Take(100).ToArray());
 
         Console.WriteLine($"{name} found, press any key");
         Console.ReadKey();

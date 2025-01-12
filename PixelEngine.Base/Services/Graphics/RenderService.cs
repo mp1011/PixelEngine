@@ -50,13 +50,30 @@
 
         Array.Copy(vram, _vram, vram.Length);
         PatternTable.SetData(_vram);
-        Layers.Background.SetData(_vram, registers.PlaneBLocation);
-        Layers.Foreground.SetData(_vram, registers.PlaneALocation);
 
         for (int index = 0; index < Sprites.Length; index++)
         {
             Sprites[index].UpdateMemory(vram, registers.SpriteTableLocation + (index * Sprite.Size));
         }
+
+        if (registers.PlaneWidth != Layers.Foreground.TileSize.Width ||
+            registers.PlaneHeight != Layers.Foreground.TileSize.Height)
+        {
+            Layers.Foreground.Resize(new Size(GensSaveStateImporter.LayerTiles(registers.PlaneWidth), GensSaveStateImporter.LayerTiles(registers.PlaneHeight)));
+            Layers.Background.Resize(new Size(GensSaveStateImporter.LayerTiles(registers.PlaneWidth), GensSaveStateImporter.LayerTiles(registers.PlaneHeight)));
+        }
+
+        Layers.Background.SetData(_vram, registers.PlaneBLocation);
+        Layers.Foreground.SetData(_vram, registers.PlaneALocation);
+
+        GensVramImporter.LoadColors(cram, this, _specs);
+
+        GensSaveStateImporter.LoadHScroll(Layers, (byte)registers.HScrollMode, vram, registers.HScrollLocation, _specs);
+
+        if (vsRam.Length > 0)
+            GensSaveStateImporter.LoadVScroll(Layers, (byte)registers.VScrollMode, vsRam, 0, _specs);
+
+
 
         _ready = true;
     }
@@ -83,7 +100,6 @@
         int bufferIndex = 0;
         int tileX = 0, tileY = 0, srcX = 0, srcY = 0, tileStart = 0;
         byte colorValue = 0;
-        Tile tile = new();
 
         short bgScrollX = 0, bgScrollY = 0, fgScrollX=0, fgScrollY = 0;
         var bgPixelsWidth = Layers.Background.PixelSize.Width;
@@ -114,7 +130,7 @@
             srcX = (x - fgScrollX).NMod(fgPixelsWidth);
             srcY = (y + fgScrollY).NMod(fgPixelsHeight);
 
-            tile = fg.Tiles[srcX / tileSize, srcY / tileSize];
+            var tile = fg.Tiles[srcX / tileSize, srcY / tileSize];
             if (tile.Index != 0)
             {
                 tileStart = tile.Index * pixelsPerTile;
