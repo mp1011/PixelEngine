@@ -16,17 +16,22 @@ var engine = new StreamScrollerTester("kc.ram", "map.bin", coreRenderService, in
 
 engine.Load();
 
-
+var planeViewer = new SfmlDiagnosticWindowManager();
 var windowManager = new SfmlWindowManager(inputManager);
 var renderService = new SfmlRenderService(specs, windowManager, coreRenderService);
+var diagnosticRenderService = new DiagnosticRenderService(coreRenderService.Layers.Foreground.PixelSize, coreRenderService, specs);
 
 ulong frameNumber = 0;
 while (windowManager.Window.IsOpen)
 {
     inputManager.Update();
     engine.Update(frameNumber++); 
+    
     windowManager.DispatchEvents();
+    planeViewer.DispatchEvents();
+
     renderService.DebugString1 = Debug.Text1;
     renderService.DebugString2 = Debug.Text2;
     renderService.DisplayFrame();
+    diagnosticRenderService.DrawPlane(coreRenderService.Layers.Foreground, planeViewer.Window);
 }

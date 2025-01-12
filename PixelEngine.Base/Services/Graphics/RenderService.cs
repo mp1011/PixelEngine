@@ -94,19 +94,66 @@
         return _pixelBuffer;
     }
 
-    private void DrawScanline(int y)
+    public byte[] DiagnosticDrawPlane(ScrollingLayer layer, byte[] diagnosticPixelBuffer)
     {
+        Array.Clear(diagnosticPixelBuffer, 0, diagnosticPixelBuffer.Length);
+        var tileSize = _specs.TileSize;
         int pixelsPerTile = _specs.TileSize * _specs.TileSize;
         int bufferIndex = 0;
         int tileX = 0, tileY = 0, srcX = 0, srcY = 0, tileStart = 0;
         byte colorValue = 0;
 
+        for (int y = 0; y < layer.PixelSize.Height; y++)
+        {
+            for (int x = 0; x < layer.PixelSize.Width; x++)
+            {
+                srcX = x;
+                srcY = y;
+
+                var tile = layer.Tiles[srcX / tileSize, srcY / tileSize];
+                if (tile.Index != 0)
+                {
+                    tileStart = tile.Index * pixelsPerTile;
+
+                    tileX = srcX - ((srcX / tileSize) * tileSize);
+                    tileY = srcY - ((srcY / tileSize) * tileSize);
+
+                    if (tile.FlipH)
+                        tileX = (tileSize - tileX - 1);
+
+                    if (tile.FlipV)
+                        tileY = (tileSize - tileY - 1);
+
+                    colorValue = PatternTable.TilePixel(tile.Index, tileX, tileY); ;
+                }
+                else
+                {
+                    colorValue = 0;
+                }
+
+                if (colorValue != 0)
+                {
+                    _palettes[(int)tile.PaletteIndex].WriteColor(colorValue, diagnosticPixelBuffer, bufferIndex);
+                }
+                bufferIndex += Color.Bytes;
+            }
+        }
+
+        return diagnosticPixelBuffer;
+    }
+
+    private void DrawScanline(int y)
+    {
+        int pixelsPerTile = _specs.TileSize * _specs.TileSize;
+        int bufferIndex = 0;
+        int tileX = 0, tileY = 0, srcX = 0, srcY = 0, tileStart = 0;
         short bgScrollX = 0, bgScrollY = 0, fgScrollX=0, fgScrollY = 0;
         var bgPixelsWidth = Layers.Background.PixelSize.Width;
         var bgPixelsHeight = Layers.Background.PixelSize.Height;
         var fgPixelsWidth = Layers.Foreground.PixelSize.Width;
         var fgPixelsHeight = Layers.Foreground.PixelSize.Height;
         var tileSize = _specs.TileSize;
+        byte colorValue = 0;
 
         var fg = Layers.Foreground;
         var bg = Layers.Background;

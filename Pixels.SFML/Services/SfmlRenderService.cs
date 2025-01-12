@@ -2,8 +2,9 @@
 {    
     private readonly RenderService _renderService;
     private readonly Texture _canvas;
-    private readonly SfmlWindowManager _windowManager;
     private RectangleShape _shape;
+
+    private readonly SfmlWindowManager _windowManager;
     private FrameRateDisplay _frameRateDisplay = new FrameRateDisplay();
     private DebugString _debugString1 = new DebugString(320);
     private DebugString _debugString2 = new DebugString(340);
