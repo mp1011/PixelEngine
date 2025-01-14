@@ -1,5 +1,7 @@
 ﻿class SfmlDiagnosticWindowManager
 {
+    public Point MousePos { get; private set; } = new Point(0,0);
+
     public SfmlDiagnosticWindowManager()
     {
         Window = new RenderWindow(
@@ -9,7 +11,13 @@
 
         Window.SetFramerateLimit(60);
         Window.Closed += Window_Closed;
-        Window.MouseButtonPressed += Window_MouseButtonPressed;
+        Window.MouseMoved += Window_MouseMoved;
+    }
+
+    private void Window_MouseMoved(object? sender, MouseMoveEventArgs e)
+    {
+        var m = Window.MapPixelToCoords(new Vector2i(e.X, e.Y));
+        MousePos = new Point((int)m.X, (int)m.Y);
     }
 
     private void Window_MouseButtonPressed(object? sender, MouseButtonEventArgs e)

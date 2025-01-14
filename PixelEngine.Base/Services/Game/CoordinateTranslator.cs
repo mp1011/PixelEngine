@@ -27,17 +27,25 @@ public class CoordinateTranslator
         .Add(-_layer.HScrollTable.Values[0], _layer.VScrollTable.Values[0])
         .NMod(_layer.PixelSize);
 
-    public Point PlaneToScreen(Point screenPoint) => screenPoint
-        .Add(_layer.HScrollTable.Values[0], -_layer.VScrollTable.Values[0])
-        .NMod(_layer.PixelSize);
-       // .NMod(_specs.ScreenSize);
-
+    public Point PlaneToScreen(Point planePoint)
+    {
+        var screenPlanePos = ScreenToPlane(0, 0);
+        var screenPoint = planePoint.Add(-screenPlanePos.X, -screenPlanePos.Y);
+        return screenPoint;
+    }
 
     public Point PlaneToWorld(Point planePoint)
     {
         var screenPoint = PlaneToScreen(planePoint);
         return ScreenToWorld(screenPoint);
     }
+
+    public Point WorldToPlane(Point worldPoint)
+    {
+        var screenPos = worldPoint - _camera.WorldLocation;
+        return ScreenToPlane(screenPos);
+    }
+
 
     public Point SpriteToScreen(Sprite sprite) => SpriteToScreen(new Point(sprite.HorizontalPos, sprite.VerticalPos));
     public Point SpriteToScreen(Point spritePosition) => spritePosition - new Point(128, 128);

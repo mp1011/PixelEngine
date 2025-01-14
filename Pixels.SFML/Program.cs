@@ -19,7 +19,7 @@ engine.Load();
 var planeViewer = new SfmlDiagnosticWindowManager();
 var windowManager = new SfmlWindowManager(inputManager);
 var renderService = new SfmlRenderService(specs, windowManager, coreRenderService);
-var diagnosticRenderService = new DiagnosticRenderService(coreRenderService.Layers.Foreground.PixelSize, coreRenderService, specs);
+var diagnosticRenderService = new DiagnosticRenderService(coreRenderService.Layers.Foreground.PixelSize, coreRenderService, specs, planeViewer, engine.CoordinateTranslator);
 
 ulong frameNumber = 0;
 while (windowManager.Window.IsOpen)

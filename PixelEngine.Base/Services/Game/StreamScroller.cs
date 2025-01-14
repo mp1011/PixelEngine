@@ -41,7 +41,8 @@
     public void Update()
     {
         // todo, calc this offset
-        _camera.WorldLocation = new Point((int)_focus.WorldX - 160, (int)_focus.WorldY - 128);   
+        _camera.WorldLocation = new Point((int)_focus.WorldX - 160, (int)_focus.WorldY - 128);
+        KeepCameraInBounds();
         
         _foreground.HScrollTable.SetAll((short)-_camera.WorldLocation.X);
         _foreground.VScrollTable.SetAll((short)_camera.WorldLocation.Y);
@@ -69,32 +70,49 @@
         if(cameraChangeSinceLastStream.X >= _specs.TileSize || cameraChangeSinceLastStream.Y >= _specs.TileSize)
         {
             StreamTiles(_lastStreamCameraLocation, _camera.WorldLocation);
-          // RefreshEntireScreen();
            _lastStreamCameraLocation = _camera.WorldLocation;
         }
+    }
+
+    private void KeepCameraInBounds()
+    {
+        if (_camera.WorldLocation.X < 0)
+            _camera.WorldLocation = new Point(0, _camera.WorldLocation.Y);
+
+        if (_camera.WorldLocation.Y < 0)
+            _camera.WorldLocation = new Point(_camera.WorldLocation.X, 0);
+
+        int maxX = _levelMap.PixelSize.Width - _specs.ScreenWidth;
+        int maxY = _levelMap.PixelSize.Height - _specs.ScreenHeight;
+
+        if (_camera.WorldLocation.X > maxX)
+            _camera.WorldLocation = new Point(maxX, _camera.WorldLocation.Y);
+
+        if (_camera.WorldLocation.Y > maxY)
+            _camera.WorldLocation = new Point(_camera.WorldLocation.X, maxY);
     }
 
     private void StreamTiles(Point cameraBefore, Point cameraNow)
     {
         if (cameraNow.X > cameraBefore.X)
         {
-            var seamBegin = _coordinateTranslator.ScreenToPlane(_specs.ScreenWidth + _specs.TileSize, 0) / _specs.TileSize;
-            var seamEnd = seamBegin.Add(3, _specs.ScreenHeight / _specs.TileSize).NMod(_foreground.TileSize); ;
+            var seamBegin =  _camera.WorldLocation.Add(_specs.ScreenWidth, 0) / _specs.TileSize;
+            var seamEnd = seamBegin.Add(3, _specs.ScreenHeight / _specs.TileSize);
 
             StreamTileRange(seamBegin, seamEnd);
         }
         else if (cameraNow.X < cameraBefore.X)
         {
-            var seamBegin = _coordinateTranslator.ScreenToPlane(-_specs.TileSize * 3, 0) / _specs.TileSize;
-            var seamEnd = seamBegin.Add(3, _specs.ScreenHeight / _specs.TileSize).NMod(_foreground.TileSize);
+            var seamBegin = _camera.WorldLocation.Add(-_specs.TileSize * 3, 0) / _specs.TileSize;
+            var seamEnd = seamBegin.Add(3, _specs.ScreenHeight / _specs.TileSize);
 
             StreamTileRange(seamBegin, seamEnd);
         }
 
         if (cameraNow.Y > cameraBefore.Y)
         {
-            var seamBegin = _coordinateTranslator.ScreenToPlane(0, _specs.ScreenHeight + _specs.TileSize) / _specs.TileSize;
-            var seamEnd = seamBegin.Add(_specs.ScreenWidth / _specs.TileSize, 3).NMod(_foreground.TileSize);
+            var seamBegin = _camera.WorldLocation.Add(0, _specs.ScreenHeight) / _specs.TileSize;
+            var seamEnd = seamBegin.Add(_specs.ScreenWidth / _specs.TileSize, 3);
 
             seamBegin = seamBegin.Add(0, -5).NMod(_foreground.TileSize);
 
@@ -102,46 +120,30 @@
         }
         else if (cameraNow.Y < cameraBefore.Y)
         {
-            var seamBegin = _coordinateTranslator.ScreenToPlane(0, -(_specs.TileSize*3)) / _specs.TileSize;
-            var seamEnd = seamBegin.Add(_specs.ScreenWidth / _specs.TileSize, 3).NMod(_foreground.TileSize);
+            var seamBegin = _camera.WorldLocation.Add(0, -(_specs.TileSize*3)) / _specs.TileSize;
+            var seamEnd = seamBegin.Add(_specs.ScreenWidth / _specs.TileSize, 3);
 
             StreamTileRange(seamBegin, seamEnd);
         }
     }
 
-    private void StreamTileRange(Point planeBegin, Point planeEnd)
-    {
-        Console.WriteLine("-------------------------------------");
-        Point planeTile = planeBegin;
-        while (planeTile.Y != planeEnd.Y)
+    private void StreamTileRange(Point worldBegin, Point worldEnd)
+       {
+        _levelMap.Tiles.ForEach(worldBegin, worldEnd, (x, y) =>
         {
-            if (planeTile.Y == 0)
-                Debug.Text2 = "";
-
-            var planePos = planeTile * _specs.TileSize;
-            var worldPos = _coordinateTranslator.PlaneToWorld(planePos);
-            var worldTile = worldPos / _specs.TileSize;
-            _foreground.Tiles[planeTile.X, planeTile.Y] = _foreground.Tiles[planeTile].CopyFrom(_levelMap.Tiles[worldTile]);
-
-
-            if(planeTile.X == planeBegin.X)
-            {
-                var st = _coordinateTranslator.PlaneToScreen(planePos);
-                Console.WriteLine($"Plane T={planeTile.Y} PX={planePos.Y}, Screen {st.Y} from World {worldTile.Y}");
-            }
-
-            planeTile = planeTile.Add(1, 0).NMod(_foreground.TileSize);
-            if(planeTile.X == planeEnd.X)
-                planeTile = new Point(planeBegin.X, planeTile.Y + 1).NMod(_foreground.TileSize);
-        }
+            var worldPos = new Point(x, y) * _specs.TileSize;
+            var planePos = _coordinateTranslator.WorldToPlane(worldPos);
+            var planeTile = planePos / _specs.TileSize;
+            _foreground.Tiles[planeTile.X, planeTile.Y] = _foreground.Tiles[planeTile].CopyFrom(_levelMap.Tiles[x,y]);
+        });
     }
 
     public void RefreshEntireScreen()
     {
-        var begin = _coordinateTranslator.ScreenToPlane(0, 0) / _specs.TileSize;
-        var end = _coordinateTranslator.ScreenToPlane(_specs.ScreenWidth, _specs.ScreenHeight) / _specs.TileSize;
-        begin = begin.Add(-1, -1).NMod(_foreground.TileSize);
-        end = end.Add(1, 1).NMod(_foreground.TileSize);
+        var begin = _camera.WorldLocation / _specs.TileSize;
+        var end = _camera.WorldLocation.Add(_specs.ScreenWidth, _specs.ScreenHeight) / _specs.TileSize;
+        //begin = begin.Add(-1, -1).NMod(_foreground.TileSize);
+        //end = end.Add(1, 1).NMod(_foreground.TileSize);
 
         StreamTileRange(begin, end);
     }

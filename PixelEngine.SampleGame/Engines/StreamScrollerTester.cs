@@ -15,6 +15,8 @@
     private Point _fullRefreshOffset = new Point(0, 0);
     private bool _needFullRefresh = false;
 
+    public CoordinateTranslator CoordinateTranslator => _coordinateTranslator;
+
     public StreamScrollerTester(string renderStateFile, string planeFile, RenderService renderService, InputManager inputManager, Specs specs)
         : base(renderService, inputManager, specs)
     {
