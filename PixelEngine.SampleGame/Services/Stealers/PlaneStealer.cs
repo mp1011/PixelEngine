@@ -21,15 +21,58 @@ class PlaneStealer
         _camera = new Camera();
         _worldMap = new LevelTileMap(new Size(1000, 1000), _specs);
         _coordinateTranslator = new CoordinateTranslator(_layer, _worldMap, _camera, _specs);
-
     }
 
+    private Point CalcWorldCameraPosition(int cameraPlaneX, int cameraPlaneY)
+    {      
+        var newCameraLocation = new Point(cameraPlaneX + (_planeX * _layer.PixelSize.Width), cameraPlaneY + (_planeY * _layer.PixelSize.Height));
+
+        var distance = (newCameraLocation - _camera.WorldLocation).Abs();
+        if (_copyEnabled && distance.X > 32)
+        {
+            var newXLeft = cameraPlaneX + ((_planeX - 1) * _layer.PixelSize.Width);
+            var newXRight = cameraPlaneX + ((_planeX + 1) * _layer.PixelSize.Width);
+
+            var distIfLeft = Math.Abs(newXLeft - _camera.WorldLocation.X);
+            var distIfRight = Math.Abs(newXRight - _camera.WorldLocation.X);
+
+            if (distIfLeft < distIfRight)
+            {
+                _planeX--;
+                Console.WriteLine($"Plane Dec: {_planeX}");
+            }
+            else
+            {
+                _planeX++;
+                Console.WriteLine($"Plane Inc: {_planeX}");
+            }
+            newCameraLocation = new Point(cameraPlaneX + (_planeX * _layer.PixelSize.Width), cameraPlaneY + (_planeY * _layer.PixelSize.Height));
+        }
+
+        if (_copyEnabled && distance.Y > 32)
+        {
+            var newYUp = cameraPlaneX + ((_planeY - 1) * _layer.PixelSize.Height);
+            var newYDown = cameraPlaneX + ((_planeY + 1) * _layer.PixelSize.Height);
+
+            var distIfUp = Math.Abs(newYUp - _camera.WorldLocation.Y);
+            var distIfDown = Math.Abs(newYDown - _camera.WorldLocation.Y);
+
+            if (distIfUp < distIfDown)
+                _planeY--;
+            else
+                _planeY++;
+
+            newCameraLocation = new Point(cameraPlaneX + (_planeX * _layer.PixelSize.Width), cameraPlaneY + (_planeY * _layer.PixelSize.Height));
+        }
+
+        return newCameraLocation;
+
+    }
     public void Update()
     {
         var cameraPlaneX = (-_layer.HScrollTable.Values[0]).NMod(_layer.PixelSize.Width);
         var cameraPlaneY = _layer.VScrollTable.Values[0];
-
-        _camera.WorldLocation = new Point(cameraPlaneX + (_planeX * _layer.PixelSize.Width), cameraPlaneY + (_planeY * _layer.PixelSize.Height));
+        _camera.WorldLocation = CalcWorldCameraPosition(cameraPlaneX, cameraPlaneY);
 
         var planeTilePoint = new Point(cameraPlaneX, cameraPlaneY) / _specs.TileSize;
         var worldTilePoint = _camera.WorldLocation / _specs.TileSize;
@@ -38,16 +81,7 @@ class PlaneStealer
         Debug.Text1 = $"Camera={_camera.WorldLocation.X},{_camera.WorldLocation.Y} WT={worldTilePoint} PT={planeTilePoint})";
         Debug.Text2 = $"Copy {copyOnOff}";
 
-        if (_inputManager.Player1.KeyPressed(GamepadButtons.Right))
-            _planeX++;
-        else if (_inputManager.Player1.KeyPressed(GamepadButtons.Left))
-            _planeX--;
-
-        if (_inputManager.Player1.KeyPressed(GamepadButtons.Up))
-            _planeY--;
-        else if (_inputManager.Player1.KeyPressed(GamepadButtons.Down))
-            _planeY++;
-
+       
         if (_inputManager.Player1.KeyPressed(GamepadButtons.A))
             _copyEnabled = !_copyEnabled;
 
@@ -93,17 +127,6 @@ class PlaneStealer
         }
 
         File.WriteAllBytes("map.bin", buffer);
-    }
-
-    private bool InCaptureRange(int worldX, int worldY)
-    {
-        int minX = _planeX * _layer.TileSize.Width;
-        int minY = _planeY * _layer.TileSize.Height;
-
-        int maxX = minX + _layer.TileSize.Width;
-        int maxY = minY + _layer.TileSize.Height;
-
-        return worldX >= minX && worldX <= maxX && worldY >= minY && worldY <= maxY;
     }
 
     private void CopyScreenTiles(Point planeCorner, Point worldCorner)

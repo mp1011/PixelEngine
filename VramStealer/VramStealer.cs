@@ -23,6 +23,10 @@ public class VramStealer
     private int _vsramAddress;
     private int _registersAddress;
 
+    public int VramAddress => _vramAddress;
+    public int CramAddress => _cramAddress;
+    public int VsramAddress => _vsramAddress;
+    public int RegistersAddress => _registersAddress;
 
     public void Setup(int? knownVramAddress, int? knownCramAddress, int? knownVsramAddress, int? knownRegistersAddress)
     {

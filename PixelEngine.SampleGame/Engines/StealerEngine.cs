@@ -1,15 +1,32 @@
 ﻿public record MemoryLocations(int? VRAM, int? CRAM, int? VSRAM, int? Registers)
 {
-    //29728192
-    //14458776
-    //29794016
+    private const string _filename = "gens_mem.bin";
 
-    //  public static MemoryLocations Local => new MemoryLocations(23240128, 23305664, 23305952, 23307232);
-    //  public static MemoryLocations Local => new MemoryLocations(33004992, 33070528, 33070816, Registers: 33072096);
-    public static MemoryLocations Local => new MemoryLocations(29728192, 14458776, 29794016, Registers: 29795296);
+    public static MemoryLocations FromDisk()
+    {
+        if (File.Exists(_filename))
+        {
+            var data = File.ReadAllBytes("gens_mem.bin");
+            return new MemoryLocations(
+                BitConverter.ToInt32(data, 0),
+                BitConverter.ToInt32(data, 4),
+                BitConverter.ToInt32(data, 8),
+                BitConverter.ToInt32(data, 12));
+        }
 
-   // public static MemoryLocations Local => new MemoryLocations(null, null, null, null);
+        return new MemoryLocations(null, null, null, null);
+    }
 
+    public void WriteToDisk()
+    {
+        List<byte> data = new List<byte>();
+        data.AddRange(BitConverter.GetBytes(VRAM!.Value));
+        data.AddRange(BitConverter.GetBytes(CRAM!.Value));
+        data.AddRange(BitConverter.GetBytes(VSRAM!.Value));
+        data.AddRange(BitConverter.GetBytes(Registers!.Value));
+
+        File.WriteAllBytes(_filename, data.ToArray());
+    }
 }
 
 public enum StealerMode
@@ -55,7 +72,8 @@ public class StealerEngine : Engine
         if (_memoryLocations.Registers == null)
             _stealer.ScanForRegisters();
 
-
+        _memoryLocations = new MemoryLocations(_stealer.VramAddress, _stealer.CramAddress, _stealer.VsramAddress, _stealer.RegistersAddress);
+        _memoryLocations.WriteToDisk();
 
         if (_mode == StealerMode.PlaneExtractor)
             _planeStealer = new PlaneStealer(_renderService.Layers.Foreground, _inputManager, _specs);
