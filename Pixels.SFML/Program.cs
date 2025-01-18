@@ -10,14 +10,14 @@ var inputManager = new SfmlInputManager(
 var coreRenderService = new RenderService(specs);
 
 //var engine = new StealerEngine(StealerMode.PlaneExtractor, MemoryLocations.FromDisk(), coreRenderService, inputManager, specs);
-var engine = new StreamScrollerTester("kc.ram", "map.bin", coreRenderService, inputManager, specs);
-
+//var engine = new StreamScrollerTester("kc.ram", "map.bin", coreRenderService, inputManager, specs);
+var engine = new KcMapEditor("kc.ram", "map.bin", coreRenderService, inputManager, specs);
 //var engine = new KcMockup(coreRenderService, inputManager, specs);
 
 engine.Load();
 
 var planeViewer = new SfmlDiagnosticWindowManager();
-var windowManager = new SfmlWindowManager(inputManager);
+var windowManager = new SfmlWindowManager(inputManager, specs);
 var renderService = new SfmlRenderService(specs, windowManager, coreRenderService);
 //var diagnosticRenderService = new DiagnosticRenderService(coreRenderService.Layers.Foreground.PixelSize, coreRenderService, specs, planeViewer, engine.CoordinateTranslator);
 
@@ -33,5 +33,5 @@ while (windowManager.Window.IsOpen)
     renderService.DebugString1 = Debug.Text1;
     renderService.DebugString2 = Debug.Text2;
     renderService.DisplayFrame();
-  //  diagnosticRenderService.DrawPlane(coreRenderService.Layers.Foreground, planeViewer.Window);
+   //wessssssssssssss45e33333333333333 diagnosticRenderService.DrawPlane(coreRenderService.Layers.Foreground, planeViewer.Window);
 }

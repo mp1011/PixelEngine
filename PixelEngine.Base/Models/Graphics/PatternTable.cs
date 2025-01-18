@@ -34,7 +34,6 @@
         };
     }
 
-
     public void SetData(byte[] bytes)
     {
         _data = bytes;

@@ -1,7 +1,14 @@
 ﻿class SfmlWindowManager
 {
-    public SfmlWindowManager(SfmlInputManager inputManager)
+    private readonly Specs _specs;
+
+    private readonly SfmlInputManager _inputManager;
+    public RenderWindow Window { get; }
+    public Size WindowSize { get; set; } = new Size(640, 480);
+
+    public SfmlWindowManager(SfmlInputManager inputManager, Specs specs)
     {
+        _specs = specs;
         _inputManager = inputManager;
         Window = new RenderWindow(
         new VideoMode((uint)WindowSize.Width, (uint)WindowSize.Height, 32),
@@ -12,6 +19,43 @@
         Window.Closed += Window_Closed;
         Window.KeyPressed += Window_KeyPressed;
         Window.KeyReleased += Window_KeyReleased;
+        Window.MouseMoved += Window_MouseMoved;
+        Window.MouseButtonPressed += Window_MouseButtonPressed;
+        Window.MouseButtonReleased += Window_MouseButtonReleased;
+    }
+
+    private void Window_MouseButtonReleased(object? sender, MouseButtonEventArgs e)
+    {
+
+        var keys = _inputManager.PlayerKeys[0];
+        if (e.Button == Mouse.Button.Left)
+            keys = keys & ~GamepadButtons.A;
+        if (e.Button == Mouse.Button.Right)
+            keys = keys & ~GamepadButtons.B;
+
+        _inputManager.PlayerKeys[0] = keys;
+    }
+
+    private void Window_MouseButtonPressed(object? sender, MouseButtonEventArgs e)
+    {
+        var keys = _inputManager.PlayerKeys[0];
+        if (e.Button == Mouse.Button.Left)
+            keys = keys | GamepadButtons.A;
+        if (e.Button == Mouse.Button.Right)
+            keys = keys | GamepadButtons.B;
+
+        _inputManager.PlayerKeys[0] = keys;
+    }
+
+    private void Window_MouseMoved(object? sender, MouseMoveEventArgs e)
+    {
+        var windowCoords = Window.MapPixelToCoords(new Vector2i(e.X, e.Y));
+        var pctX = windowCoords.X / WindowSize.Width;
+        var pctY = windowCoords.Y / WindowSize.Height;
+
+        _inputManager.CurrentMousePosition = new Point(
+            (int)(pctX * _specs.ScreenWidth),
+            (int)(pctY * _specs.ScreenHeight));
     }
 
     private void Window_KeyReleased(object? sender, KeyEventArgs e)
@@ -50,10 +94,6 @@
 
         _inputManager.PlayerKeys[0] = keys;
     }
-
-    private SfmlInputManager _inputManager;
-    public RenderWindow Window { get; }   
-    public Size WindowSize { get; set; } = new Size(640, 480);
 
     public void DispatchEvents() => Window.DispatchEvents();
 
