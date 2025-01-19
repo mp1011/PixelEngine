@@ -5,15 +5,20 @@
     private MovingSprite _cameraFocus;
     private CoordinateTranslator _coordinateTranslator;
     private LevelTileMap _map;
+    private TileProperties _tileProperties;
 
     public CoordinateTranslator CoordinateTranslator => _coordinateTranslator;
-
-    public KcMapEditor(string renderStateFile, string planeFile, RenderService renderService, InputManager inputManager, Specs specs)
+    
+    public KcMapEditor(string renderStateFile, string planeFile, string tileProperiesFile, RenderService renderService, InputManager inputManager, Specs specs)
         : base(renderService, inputManager, specs)
     {
+        _tileProperties = new TileProperties(tileProperiesFile);
         _renderStateFile = renderStateFile;
         _planeFile = planeFile;
     }
+
+    public TileType TilePropertiesAt(int tileX, int tileY) =>
+        _tileProperties[_map.Tiles[tileX, tileY].Index];
 
     public override void Load()
     {
@@ -63,7 +68,6 @@
         _streamScroller.RefreshEntireScreen();
     }
 
-    int dummy = 0;
     public override void Update(ulong frameNumber)
     {
         var scrollSpeed = _inputManager.Player1.KeyDown(GamepadButtons.A) ? 4 : 1;
@@ -85,12 +89,22 @@
         _cameraFocus.Update();
         _streamScroller!.Update();
 
+        var tileUnderMouse = TileUnderMouse();
         if (_inputManager.Player1.KeyPressed(GamepadButtons.A))
-            dummy++;
+        {
+            _tileProperties[tileUnderMouse.Index] = _tileProperties[tileUnderMouse.Index] + 1;
+        }
         if (_inputManager.Player1.KeyPressed(GamepadButtons.B))
-            dummy--;
+        {
+            _tileProperties[tileUnderMouse.Index] = _tileProperties[tileUnderMouse.Index] - 1;
+        }
+        if (_inputManager.Player1.KeyPressed(GamepadButtons.C))
+        {
+            _tileProperties.WriteToDisk();
+        }
 
-        Debug.Text1 = $"MOUSE={_inputManager.MousePosition} TILE={TileUnderMouse()} {dummy}";
+        Debug.Text1 = $"MOUSE={_inputManager.MousePosition} TILE={tileUnderMouse}";
+        Debug.Text2 = _tileProperties[tileUnderMouse.Index].ToString();
     }
 
     private Tile TileUnderMouse()

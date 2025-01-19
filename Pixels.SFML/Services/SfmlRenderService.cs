@@ -4,23 +4,9 @@
     private readonly Texture _canvas;
     private RectangleShape _shape;
 
-    private readonly SfmlWindowManager _windowManager;
-    private FrameRateDisplay _frameRateDisplay = new FrameRateDisplay();
-    private DebugString _debugString1 = new DebugString(320);
-    private DebugString _debugString2 = new DebugString(340);
-
-    public string DebugString1
-    {
-        get => _debugString1.Text;
-        set => _debugString1.Text = value;
-    }
-
-    public string DebugString2
-    {
-        get => _debugString2.Text;
-        set => _debugString2.Text = value;
-    }
-
+    private readonly SfmlWindowManager _windowManager;    
+    private List<IDisplayOverlay> _overlays = new List<IDisplayOverlay>();
+   
     public SfmlRenderService(Specs specs, SfmlWindowManager windowManager, RenderService renderService)
     {
         _renderService = renderService;
@@ -32,15 +18,20 @@
         _shape.Texture = _canvas;
     }
 
+    public void AddOverlay(IDisplayOverlay overlay)
+    {
+        _overlays.Add(overlay);
+    }
+
     public void DisplayFrame()
     {
         var window = _windowManager.Window;
         _canvas.Update(_renderService.CalculateFramePixels());
         window.Clear();
         window.Draw(_shape);
-        _frameRateDisplay.Draw(window);
-        _debugString1.Draw(window);
-        _debugString2.Draw(window);
+
+        foreach (var overlay in _overlays)
+            overlay.Draw(window);
 
         window.Display();
     }

@@ -1,4 +1,4 @@
-﻿public class FrameRateDisplay
+﻿public class FrameRateDisplay : IDisplayOverlay
 {
     private readonly Font _font;
     private readonly Text _text;

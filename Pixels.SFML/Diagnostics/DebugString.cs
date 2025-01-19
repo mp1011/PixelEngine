@@ -1,4 +1,4 @@
-﻿public class DebugString
+﻿public class DebugString : IDisplayOverlay
 {
     private readonly Font _font;
     private readonly Text _text;

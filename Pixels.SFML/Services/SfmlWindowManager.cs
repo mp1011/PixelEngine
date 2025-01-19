@@ -73,6 +73,8 @@
             keys = keys & ~GamepadButtons.A;
         if (e.Code == Keyboard.Key.S)
             keys = keys & ~GamepadButtons.B;
+        if (e.Code == Keyboard.Key.D)
+            keys = keys & ~GamepadButtons.C;
         _inputManager.PlayerKeys[0] = keys;
     }
 
@@ -91,7 +93,8 @@
             keys = keys | GamepadButtons.A;
         if (e.Code == Keyboard.Key.S)
             keys = keys | GamepadButtons.B;
-
+        if (e.Code == Keyboard.Key.D)
+            keys = keys | GamepadButtons.C;
         _inputManager.PlayerKeys[0] = keys;
     }
 
