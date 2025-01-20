@@ -95,21 +95,4 @@
         return new KeyedTileAnimation<PlayerAnimations>(
             0x625 * 0x20, animations);
     }
-
-    public static CollisionMap CreateCollisionMap()
-    {
-        var map = new CollisionMap(512, 64);
-
-        map.ForEach((x, y) =>
-        {
-            if ( x > 14 && x < 35 && (y == 11 || y == 12))
-                map[x, y] = CollisionType.Solid;
-
-            if (y == 21)
-                map[x, y] = CollisionType.Solid;
-        });
-
-        return map;
-    }
-
 }

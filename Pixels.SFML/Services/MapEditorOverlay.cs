@@ -1,14 +1,16 @@
 ﻿interface IDisplayOverlay
 {
-    void Draw(RenderWindow window);
+    void Draw(RenderWindow window, float scaleX, float scaleY);
 }
 class MapEditorOverlay : IDisplayOverlay
 {
+    private Specs _specs;
     private readonly KcMapEditor _editor;
     private ArrayDataGrid<Shape> _tileOverlays;
     private SfmlWindowManager _windowManager;
     public MapEditorOverlay(KcMapEditor editor, SfmlWindowManager windowManager, Specs specs)
     {
+        _specs = specs;
         _editor = editor;
         _windowManager = windowManager;
         _tileOverlays = new ArrayDataGrid<Shape>(specs.ScreenWidth / specs.TileSize, specs.ScreenHeight / specs.TileSize);
@@ -41,12 +43,19 @@ class MapEditorOverlay : IDisplayOverlay
         }
     }
 
-    public void Draw(RenderWindow window)
+    public void Draw(RenderWindow window, float xScale, float yScale)
     {
+        var cornerTile = _editor.ScreenCornerTile();
+        var scrollOffset = _editor.ScreenScrollOffset();
+      
         _tileOverlays.ForEach((x, y) =>
         {
             var tile = _tileOverlays[x, y];
-            tile.FillColor = TileFillColor(x, y);
+            tile.FillColor = TileFillColor(cornerTile.X + x, cornerTile.Y + y);
+            tile.Position = new Vector2f(
+                (float)(((x * _specs.TileSize) + scrollOffset.X) * xScale), 
+                (float)(((y * _specs.TileSize) - scrollOffset.Y) * yScale));
+
             window.Draw(tile);
         });
     }

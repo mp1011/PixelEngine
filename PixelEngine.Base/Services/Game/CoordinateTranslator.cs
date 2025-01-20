@@ -46,6 +46,12 @@ public class CoordinateTranslator
         return ScreenToPlane(screenPos);
     }
 
+    public Point WorldToScreen(Point worldPoint)
+    {
+        var plane = WorldToPlane(worldPoint);
+        return PlaneToScreen(plane);
+    }
+
 
     public Point SpriteToScreen(Sprite sprite) => SpriteToScreen(new Point(sprite.HorizontalPos, sprite.VerticalPos));
     public Point SpriteToScreen(Point spritePosition) => spritePosition - new Point(128, 128);

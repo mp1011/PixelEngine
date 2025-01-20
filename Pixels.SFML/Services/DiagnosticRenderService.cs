@@ -68,7 +68,7 @@
         window.Draw(_screenBorder);
         window.Draw(_screenBorderV);
         window.Draw(_screenBorderH);
-        _debugString.Draw(window);
+        _debugString.Draw(window, 1,1);
         window.Display();
     }
 }

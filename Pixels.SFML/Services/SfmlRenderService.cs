@@ -3,6 +3,7 @@
     private readonly RenderService _renderService;
     private readonly Texture _canvas;
     private RectangleShape _shape;
+    private float _scaleX, _scaleY;
 
     private readonly SfmlWindowManager _windowManager;    
     private List<IDisplayOverlay> _overlays = new List<IDisplayOverlay>();
@@ -16,6 +17,10 @@
         _shape = new RectangleShape(new Vector2f(windowManager.WindowSize.Width, windowManager.WindowSize.Height));
         _shape.Position = new Vector2f(0, 0);
         _shape.Texture = _canvas;
+
+
+        _scaleX = _windowManager.WindowSize.Width / specs.ScreenWidth;
+        _scaleY = _windowManager.WindowSize.Width / specs.ScreenHeight;
     }
 
     public void AddOverlay(IDisplayOverlay overlay)
@@ -30,8 +35,9 @@
         window.Clear();
         window.Draw(_shape);
 
+
         foreach (var overlay in _overlays)
-            overlay.Draw(window);
+            overlay.Draw(window, _scaleX, _scaleY);
 
         window.Display();
     }

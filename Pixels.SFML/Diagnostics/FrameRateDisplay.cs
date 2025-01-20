@@ -12,7 +12,7 @@
         _text.Position = new Vector2f(0, 400);
     }
 
-    public void Draw(RenderWindow window)
+    public void Draw(RenderWindow window, float xScale, float yScale)
     {
         var fps = _calculator.CalcFPS();
         _text.DisplayedString = $"FPS = {fps.ToString("0.0")}";

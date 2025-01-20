@@ -24,5 +24,7 @@
 
     public override string ToString() => $"{X},{Y}";
     public Point NMod(Size size) => new Point(X.NMod(size.Width), Y.NMod(size.Height));
+    public Point NMod(int value) => new Point(X.NMod(value), Y.NMod(value));
+
     public Point Abs() => new Point(Math.Abs(X), Math.Abs(Y)); 
 }

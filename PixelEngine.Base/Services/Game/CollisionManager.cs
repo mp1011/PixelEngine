@@ -1,10 +1,10 @@
-﻿public class CollisionManager
+﻿public abstract class CollisionManager
 {
     private readonly Specs _specs;
     private readonly CoordinateTranslator _coordinateTranslator;
-    private readonly CollisionMap _collisionMap;
+    protected readonly LevelTileMap _collisionMap;
 
-    public CollisionManager(CollisionMap collisionMap, CoordinateTranslator coordinateTranslator, Specs specs)
+    public CollisionManager(LevelTileMap collisionMap, CoordinateTranslator coordinateTranslator, Specs specs)
     {
         _coordinateTranslator = coordinateTranslator;
         _coordinateTranslator.ScrollSeamCorner = new Point(0, 0);
@@ -23,12 +23,12 @@
         var verticalHitbox = collider.GetVerticalHitbox(worldPosition);
         var horizontalHitbox = collider.GetHorizontalHitbox(worldPosition);
 
-        _collisionMap.ForEach(
+        _collisionMap.Tiles.ForEach(
             from: topLeftTile,
             to: bottomRightTile,
             (x, y) =>
             {
-                if (_collisionMap[x, y] == CollisionType.Solid)
+                if (IsTileCollidable(x,y))
                 {
                     var tileHitbox = new Rectangle(x * _specs.TileSize, y * _specs.TileSize, _specs.TileSize, _specs.TileSize);
                     int xCorrection=0, yCorrection=0;
@@ -96,5 +96,7 @@
 
         return response;
     }
+
+    protected abstract bool IsTileCollidable(int x, int y);
 }
 

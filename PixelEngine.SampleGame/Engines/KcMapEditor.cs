@@ -9,12 +9,23 @@
 
     public CoordinateTranslator CoordinateTranslator => _coordinateTranslator;
     
-    public KcMapEditor(string renderStateFile, string planeFile, string tileProperiesFile, RenderService renderService, InputManager inputManager, Specs specs)
+    public KcMapEditor(string renderStateFile, string planeFile, string tilePropertiesFile, RenderService renderService, InputManager inputManager, Specs specs)
         : base(renderService, inputManager, specs)
     {
-        _tileProperties = new TileProperties(tileProperiesFile);
+        _tileProperties = new TileProperties(tilePropertiesFile);
         _renderStateFile = renderStateFile;
         _planeFile = planeFile;
+    }
+
+    public Point ScreenCornerTile() =>
+        _coordinateTranslator.ScreenToWorld(new Point(0, 0)) / _specs.TileSize;
+
+    public Point ScreenScrollOffset()
+    {
+        var scrollH = _renderService.Layers.Foreground.HScrollTable.Values[0];
+        var scrollV = _renderService.Layers.Foreground.VScrollTable.Values[0];
+
+        return new Point(scrollH, scrollV).NMod(_specs.TileSize);
     }
 
     public TileType TilePropertiesAt(int tileX, int tileY) =>

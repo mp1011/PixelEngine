@@ -13,7 +13,7 @@
         Text = "TEST";
     }
 
-    public void Draw(RenderWindow window)
+    public void Draw(RenderWindow window, float xScale, float yScale)
     {
         _text.DisplayedString = Text;
         window.Draw(_text);

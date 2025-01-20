@@ -1,9 +1,10 @@
-﻿public enum TileType
+﻿public enum TileType : byte
 {
     Empty,
     Solid,
     Block,
-    Prize
+    Prize,
+    Max=Prize
 }
 
 public class TileProperties
@@ -24,6 +25,8 @@ public class TileProperties
         {
             short tileNumber = (short)((buffer[index] << 8) | buffer[index + 1]);
             TileType tileType = (TileType)buffer[index + 2];
+            if (tileType > TileType.Max)
+                tileType = TileType.Empty;
             _tileTypes[tileNumber] = tileType;
             index += 3;
         }

@@ -4,11 +4,12 @@
 
     private readonly SfmlInputManager _inputManager;
     public RenderWindow Window { get; }
-    public Size WindowSize { get; set; } = new Size(640, 480);
+    public Size WindowSize { get; set; }
 
     public SfmlWindowManager(SfmlInputManager inputManager, Specs specs)
     {
         _specs = specs;
+        WindowSize = new Size(_specs.ScreenWidth*2, _specs.ScreenHeight*2);
         _inputManager = inputManager;
         Window = new RenderWindow(
         new VideoMode((uint)WindowSize.Width, (uint)WindowSize.Height, 32),

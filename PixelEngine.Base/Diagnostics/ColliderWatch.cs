@@ -1,0 +1,1 @@
+﻿public record ColliderWatch(SpriteCollider Collider, MovingSprite Sprite);

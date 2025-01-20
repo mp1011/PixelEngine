@@ -21,10 +21,13 @@
         _player.HorizontalMotion.Acceleration = MotionConstants.PlayerAccel;
         _player.VerticalMotion.Acceleration = MotionConstants.PlayerGravity;
 
+        int hitboxPadding = 4;
 
         _collider = new SpriteCollider(
-            HorizontalCollider: new Rectangle(0, 4, _player.PixelWidth, _player.PixelHeight - 8),
-            VerticalCollider: new Rectangle(4, 0, _player.PixelWidth - 8, _player.PixelHeight));
+            HorizontalCollider: new Rectangle(0, hitboxPadding, _player.PixelWidth, _player.PixelHeight - (hitboxPadding*2)),
+            VerticalCollider: new Rectangle(hitboxPadding, 0, _player.PixelWidth - (hitboxPadding * 2), _player.PixelHeight));
+
+        Debug.WatchedColliders.Add(new ColliderWatch(_collider, _player));
     }
 
     public double PlayerMoveSpeed => _inputManager.Player1.KeyDown(GamepadButtons.A) ? MotionConstants.PlayerRunSpeed : MotionConstants.PlayerWalkSpeed;
